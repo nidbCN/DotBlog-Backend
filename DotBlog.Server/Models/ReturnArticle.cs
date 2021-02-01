@@ -24,7 +24,7 @@ namespace DotBlog.Server.Models
                 PostTime = articleItem.PostTime,
                 Read = articleItem.Read,
                 ResourceUri = articleItem.ResourceUri,
-                Tags = articleItem.Tags,
+                // Tags = articleItem.Tags,
                 Title = articleItem.Title
             };
 
@@ -61,10 +61,10 @@ namespace DotBlog.Server.Models
         /// </summary>
         public string Category { get; set; }
 
-        /// <summary>
-        /// List[string]: 标签
-        /// </summary>
-        public List<string> Tags { get; set; }
+        // /// <summary>
+        // /// List[string]: 标签
+        // /// </summary>
+        // public List<string> Tags { get; set; }
 
         /// <summary>
         /// 发布时间(JavaScript时间戳)
