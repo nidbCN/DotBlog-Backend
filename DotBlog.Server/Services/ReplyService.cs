@@ -13,7 +13,7 @@ namespace DotBlog.Server.Services
     public class ReplyService : IReplyService
     {
         private DotBlogDbContext Context { get; }
-        
+
         public ReplyService(DotBlogDbContext context)
         {
             Context = context;
@@ -29,42 +29,52 @@ namespace DotBlog.Server.Services
                 .Where(it => it.ArticleId == articleId)
                 .ToListAsync();
 
-        private async Task<Reply> GetReply(Guid replyId) =>
-            await Context.Replies
-                .FirstOrDefaultAsync(it => it.ReplyId == replyId);
+        /// <summary>
+        /// 获取回复
+        /// </summary>
+        /// <param name="articleId">文章ID</param>
+        /// <param name="replyId">回复ID</param>
+        /// <returns>Reply: 回复实例</returns>
+        private async Task<Reply> GetReply(Guid articleId, Guid replyId)
+        {
+            var articleItem = await Context.Articles
+                .FirstOrDefaultAsync(it => it.ArticleId == articleId);
+            return articleItem.Replies
+                .Find(it => it.ReplyId == replyId);
+        }
+
 
         /// <summary>
         /// 更新回复的点赞数
         /// </summary>
         /// <param name="replyId">Guid: 回复ID</param>
+        /// <param name="articleId">Guid: 文章ID</param>
         /// <returns>uint: 更新后的点赞数</returns>
-        public async Task<uint> PatchReplyLike(Guid replyId)
+        public async Task<bool> PatchReplyLike(Guid articleId, Guid replyId)
         {
-            var reply = await GetReply(replyId);
-            var ret = reply.Like++;
-            if (await SaveChanges())
-            {
-                ret++;
-            }
-
-            return ret;
+            var replyItem = await GetReply(articleId, replyId);
+            replyItem.Like++;
+            return await SaveChanges();
         }
 
-        public async Task<bool> PostReply(Guid articleId, Reply reply)
+        public async Task<Reply> PostReply(Guid articleId, Reply reply)
         {
-            var ret = false;
-
-            reply.ReplyId = new Guid();
+            var replyId = new Guid();
+            reply.ReplyId = replyId;
             reply.ReplyTime = DateTime.Now;
+            reply.ResourceUri = $"/article/{articleId}/reply/{replyId}";
 
             if (reply.Link.MatchUrl() && reply.Mail.MatchEmail().isMatch)
             {
                 await Context.Replies
                     .AddAsync(reply);
-                ret = await SaveChanges();
+                if (await SaveChanges())
+                {
+                    return reply;
+                }
             }
 
-            return ret;
+            return null;
         }
 
         public async Task<bool> DeleteReply(Guid articleId, Guid replyId)

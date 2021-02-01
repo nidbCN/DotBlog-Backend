@@ -6,7 +6,7 @@ using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Services
 {
-    interface IReplyService
+    public interface IReplyService
     {
         // 获取相关
 
@@ -22,9 +22,10 @@ namespace DotBlog.Server.Services
         /// <summary>
         /// 更新回复的点赞数
         /// </summary>
+        /// <param name="articleId">Guid: 文章ID</param>
         /// <param name="replyId">Guid: 回复ID</param>
         /// <returns>uint: 更新后的点赞数</returns>
-        Task<uint> PatchReplyLike(Guid replyId);
+        Task<bool> PatchReplyLike(Guid articleId, Guid replyId);
 
         // 写入相关
 
@@ -34,7 +35,7 @@ namespace DotBlog.Server.Services
         /// <param name="articleId">Guid: 回复的文章ID</param>
         /// <param name="reply">ReplyItem: 新评论</param>
         /// <returns></returns>
-        Task<bool> PostReply(Guid articleId, Reply reply);
+        Task<Reply> PostReply(Guid articleId, Reply reply);
 
         // 删除相关
 

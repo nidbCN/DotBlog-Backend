@@ -86,9 +86,10 @@ namespace DotBlog.Server.Services
 
         public async Task<Article> PostArticle(Article article)
         {
-            article.ArticleId = new Guid();
+            var articleId = new Guid();
+            article.ArticleId = articleId;
             article.PostTime = DateTime.Now;
-            article.ResourceUri = $"/article/{article.ArticleId}";
+            article.ResourceUri = $"/article/{articleId}";
             await Context.Articles
                 .AddAsync(article);
             return await SaveChanges() ? article: null;

@@ -10,6 +10,21 @@
         {
             Value = returnValue;
         }
+
+        public ReturnUniversally(object returnValue,uint count)
+        {
+            Value = returnValue;
+            Count = count;
+        }
+
+        public ReturnUniversally(object returnValue, uint count, uint code, string message)
+        {
+            Value = returnValue;
+            Count = count;
+            Code = code;
+            Message = message;
+        }
+
         public uint Code { get; set; } = 0;
         public string Message { get; set; } = "Success";
         public uint Count { get; set; } = 0;

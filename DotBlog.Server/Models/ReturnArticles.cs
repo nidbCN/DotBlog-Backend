@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using DotBlog.Server.Entities;
+using Masuit.Tools;
 
 namespace DotBlog.Server.Models
 {
@@ -9,6 +10,11 @@ namespace DotBlog.Server.Models
     {
         public static List<ReturnArticles> Convert(List<Article> articles)
         {
+            if (articles == null)
+            {
+                return null;
+            }
+
             var articleRet = new List<ReturnArticles>();
 
             // TODO(mail@gaein.cn): 使用LINQ查询赋值
