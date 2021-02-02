@@ -59,15 +59,18 @@ namespace DotBlog.Server.Services
 
         public async Task<Reply> PostReply(Guid articleId, Reply reply)
         {
-            var replyId = new Guid();
+            var replyId = Guid.NewGuid();
+
             reply.ReplyId = replyId;
+            reply.ArticleId = articleId;
             reply.ReplyTime = DateTime.Now;
             reply.ResourceUri = $"/article/{articleId}/reply/{replyId}";
 
             if (reply.Link.MatchUrl() && reply.Mail.MatchEmail().isMatch)
             {
-                await Context.Replies
-                    .AddAsync(reply);
+                // await Context.Replies.AddAsync(reply);
+                var articleItem = await Context.Articles.FirstOrDefaultAsync(it => it.ArticleId == articleId);
+                articleItem.Replies.Add(reply);
                 if (await SaveChanges())
                 {
                     return reply;

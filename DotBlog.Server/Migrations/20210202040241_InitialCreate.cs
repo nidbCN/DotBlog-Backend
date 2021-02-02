@@ -44,7 +44,8 @@ namespace DotBlog.Server.Migrations
                     Content = table.Column<string>(type: "TEXT", nullable: true),
                     Link = table.Column<string>(type: "TEXT", nullable: true),
                     Mail = table.Column<string>(type: "TEXT", nullable: true),
-                    ReplyTime = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    ReplyTime = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    ResourceUri = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotBlog.Server.Migrations
 {
     [DbContext(typeof(DotBlogDbContext))]
-    [Migration("20210201102908_InitialCreate")]
+    [Migration("20210202040241_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,9 @@ namespace DotBlog.Server.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("ReplyTo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ResourceUri")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserExplore")

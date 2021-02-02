@@ -93,6 +93,9 @@ namespace DotBlog.Server.Migrations
                     b.Property<Guid>("ReplyTo")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ResourceUri")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UserExplore")
                         .HasColumnType("TEXT");
 

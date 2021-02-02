@@ -1,0 +1,6 @@
+删除数据库：
+Drop-Database
+Remove-Migration
+新建数据库：
+Add-Migration InitialCreate
+Update-Database

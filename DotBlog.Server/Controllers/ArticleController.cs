@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 using DotBlog.Server.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DotBlog.Server.Controllers
 {
@@ -85,6 +86,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <param name="articleItem">文章实例</param>
         /// <returns></returns>
+        //[Authorize]
         [HttpPut("{articleId}")]
         public async Task<IActionResult> PutArticle([FromRoute] string articleId, [FromBody] Article articleItem)
         {
@@ -153,6 +155,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleItem">文章实例</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
+        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> PostArticle([FromBody] Article articleItem)
         {
@@ -193,6 +196,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTPP 404</returns>
+        //[Authorize]
         [HttpDelete("{articleId}")]
         public async Task<IActionResult> DeleteArticle([FromRoute] string articleId)
         {
@@ -202,6 +206,13 @@ namespace DotBlog.Server.Controllers
             return result ? NoContent() : NotFound();
         }
 
+        /// <summary>
+        /// 删除评论
+        /// </summary>
+        /// <param name="articleId">文章ID</param>
+        /// <param name="replyId">评论ID</param>
+        /// <returns></returns>
+        //[Authorize]
         [HttpDelete("{articleId}/reply/{replyID}")]
         public async Task<IActionResult> DeleteReply([FromRoute] Guid articleId, [FromRoute] Guid replyId)
         {
