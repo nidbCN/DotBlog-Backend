@@ -24,19 +24,21 @@ namespace DotBlog.Server.Data
         // 重写父类方法设置数据库
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var articleConf = modelBuilder.Entity<Article>();
+            var replyConf = modelBuilder.Entity<Reply>();
+
             // 设置对应关系
-            
-            modelBuilder.Entity<Reply>()
+            replyConf
                 .HasOne(it => it.Article)
-                .WithMany(it=>it.Replies)
+                .WithMany(it => it.Replies)
                 .HasForeignKey(it => it.ArticleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Article>()
-                .HasOne(it => it.Category)
-                .WithMany(it => it.Articles)
-                .HasForeignKey(it => it.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // 设置键和索引
+            replyConf.HasKey(it => it.ReplyId);
+            replyConf.HasIndex(it => it.ReplyId);
+            articleConf.HasKey(it => it.ArticleId);
+            articleConf.HasIndex(it => it.ArticleId);
         }
     }
 }

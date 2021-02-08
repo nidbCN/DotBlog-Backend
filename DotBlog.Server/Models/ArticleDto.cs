@@ -5,9 +5,9 @@ namespace DotBlog.Server.Models
     public class ArticleDto
     {
         /// <summary>
-        /// 文章ID
+        /// 文章别名
         /// </summary>
-        public Guid ArticleId { get; set; }
+        public string Alias { get; set; }
 
         /// <summary>
         /// 文章标题
@@ -34,13 +34,8 @@ namespace DotBlog.Server.Models
         /// </summary>
         public string Category { get; set; }
 
-        // /// <summary>
-        // /// List[string]: 标签
-        // /// </summary>
-        // public List<string> Tags { get; set; }
-
         /// <summary>
-        /// 发布时间(JavaScript时间戳)
+        /// 发布时间
         /// </summary>
         public DateTime PostTime { get; set; }
 
@@ -58,5 +53,11 @@ namespace DotBlog.Server.Models
         /// 资源URI
         /// </summary>
         public string ResourceUri { get; set; }
+
+        // /// <summary>
+        // /// List[string]: 标签
+        // /// </summary>
+        // TODO(mail@gaein.cn)
+        // public List<string> Tags { get; set; }
     }
 }

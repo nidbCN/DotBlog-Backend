@@ -1,29 +1,42 @@
-﻿using System;
+﻿using System.Text.Json;
 using System.Threading.Tasks;
-using AngleSharp.Dom;
-using DotBlog.Server.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using AutoMapper;
+using Masuit.Tools.Html;
+using DotBlog.Server.Entities;
+using DotBlog.Server.Models;
 using DotBlog.Server.Services;
 
 namespace DotBlog.Server.Controllers
 {
+    // TODO(mail@gaein.cn): 更新Log
     [Route(Startup.ApiVersion + "Articles/{articleId}/[controller]")]
     [ApiController]
     public class RepliesController : ControllerBase
     {
+        // 通过DI注入的只读服务
         private IArticleService ArticleService { get; }
         private IReplyService ReplyService { get; }
         private ILogger<RepliesController> Logger { get; }
-        private IActionResult ResetContent() => StatusCode(205);
-        private IActionResult InternalServerError() => StatusCode(500);
-        // 端点模板起始部分
-        public RepliesController(IArticleService articleService, IReplyService replyService, ILogger<RepliesController> logger)
+        private IMapper Mapper { get; }
+
+        // 自定义返回类型
+        private StatusCodeResult ResetContent() => StatusCode(205);
+        private StatusCodeResult InternalServerError() => StatusCode(500);
+
+        // 自定义字段
+        private JsonSerializerOptions PrintOptions { get; }
+            = new() { WriteIndented = true };
+
+        // 构造函数
+        public RepliesController(IArticleService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
         {
             ArticleService = articleService;
             ReplyService = replyService;
             Logger = logger;
+            Mapper = mapper;
         }
 
         /// <summary>
@@ -32,13 +45,8 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<IActionResult> GetReplies([FromRoute] Guid articleId)
+        public async Task<IActionResult> GetReplies([FromRoute] uint articleId)
         {
-            // 判空
-            if (articleId == Guid.Empty)
-            {
-                return BadRequest();
-            }
             // 获取文章
             var articleItem = await ArticleService.GetArticleAsync(articleId);
             // 判空
@@ -57,18 +65,14 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
         [HttpPatch("{replyId}/Like")]
-        public IActionResult PatchReplyLike([FromRoute] Guid articleId, [FromRoute] Guid replyId)
+        public IActionResult PatchReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            if (articleId == Guid.Empty || replyId == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
             var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {
                 return NotFound();
             }
+            
             var replyItem = ReplyService.GetReply(articleItem, replyId);
             if (replyItem == null)
             {
@@ -84,26 +88,28 @@ namespace DotBlog.Server.Controllers
         /// 新建回复
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <param name="replyItem">回复</param>
+        /// <param name="replyItemDto">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public IActionResult PostReply([FromRoute] Guid articleId, [FromBody] Reply replyItem)
+        public IActionResult PostReply([FromRoute] uint articleId, [FromBody] ReplyDto replyItemDto)
         {
-            if (articleId == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
-            if (replyItem == null)
-            {
-                return BadRequest();
-            }
-
             var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {
                 return NotFound();
             }
+
+            replyItemDto.Content?.HtmlSantinizerStandard();
+            replyItemDto.Author?.HtmlSantinizerStandard();
+            replyItemDto.AvatarUrl?.HtmlSantinizerStandard();
+            replyItemDto.Link?.HtmlSantinizerStandard();
+            replyItemDto.Mail?.HtmlSantinizerStandard();
+            replyItemDto.UserExplore?.HtmlSantinizerStandard();
+            replyItemDto.UserExplore?.HtmlSantinizerStandard();
+
+            Logger.LogInformation(JsonSerializer.Serialize(replyItemDto, PrintOptions));
+
+            var replyItem = Mapper.Map<Reply>(replyItemDto);
 
             var result = ReplyService.PostReply(articleItem, replyItem);
             return result == null
@@ -119,13 +125,8 @@ namespace DotBlog.Server.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpDelete("{replyId}")]
-        public IActionResult DeleteReply([FromRoute] Guid articleId, [FromRoute] Guid replyId)
+        public IActionResult DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            if (articleId == Guid.Empty || replyId == Guid.Empty)
-            {
-                return BadRequest();
-            }
-
             var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {

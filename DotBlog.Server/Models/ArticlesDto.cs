@@ -2,14 +2,8 @@
 
 namespace DotBlog.Server.Models
 {
-    public class ArticlesListDto
+    public class ArticlesDto
     {
-
-        /// <summary>
-        /// 文章ID
-        /// </summary>
-        public Guid ArticleId { get; set; }
-
         /// <summary>
         /// 文章别名
         /// </summary>
@@ -28,7 +22,7 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 是否展示在首页上
         /// </summary>
-        public bool IsShown { get; set; } = true;
+        public bool IsShown { get; set; }
 
         /// <summary>
         /// 阅读数
@@ -41,13 +35,29 @@ namespace DotBlog.Server.Models
         public uint Like { get; set; } = 0;
 
         /// <summary>
-        /// 发布时间(JavaScript时间戳)
+        /// 分类
+        /// </summary>
+        public string Category { get; set; }
+
+        /// <summary>
+        /// 发布时间
         /// </summary>
         public DateTime PostTime { get; set; }
+
+        /// <summary>
+        /// 作者
+        /// </summary>
+        public string Author { get; set; }
 
         /// <summary>
         /// 资源URI
         /// </summary>
         public string ResourceUri { get; set; }
+
+        // /// <summary>
+        // /// List[string]: 标签
+        // /// </summary>
+        // TODO(mail@gaein.cn)
+        // public List<string> Tags { get; set; }
     }
 }

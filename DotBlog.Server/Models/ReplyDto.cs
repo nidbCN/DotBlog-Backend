@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace DotBlog.Server.Entities
+namespace DotBlog.Server.Models
 {
-    public class Reply
+    public class ReplyDto
     {
-        public Article Article { get; set; }
         /// <summary>
         /// 用户平台
         /// </summary>
@@ -18,16 +17,6 @@ namespace DotBlog.Server.Entities
         /// 头像网址
         /// </summary>
         public string AvatarUrl { get; set; }
-
-        /// <summary>
-        /// 评论的文章ID
-        /// </summary>
-        public uint ArticleId { get; set; }
-
-        /// <summary>
-        /// 某条评论的ID
-        /// </summary>
-        public uint ReplyId { get; set; }
 
         /// <summary>
         /// 回复给某条评论ID

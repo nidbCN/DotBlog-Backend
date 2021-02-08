@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using DotBlog.Server.Data;
 using DotBlog.Server.Entities;
 
+
 namespace DotBlog.Server.Services
 {
     public class ArticleService : IArticleService
@@ -18,64 +19,55 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
+
         // 获取相关
 
-        public async Task<List<Article>> GetArticlesAsync(int? limit)
+        public async Task<ICollection<Article>> GetArticlesAsync(int? limit)
         {
-            // 判空limit
-            var limitInt = (limit ??= -1);
-            // 返回列表
+            // 判空
+            var limitNotNull = limit ?? -1;
+            
+            // 查询
             return await Context.Articles
                 .OrderBy(it => it.PostTime.Ticks)
-                .Take(limitInt)
+                .Take(limitNotNull)
                 .ToListAsync();
         }
 
-        public /*async*/ Task<List<Article>> GetArticlesAsync(int? limit, Guid categoryId)
+        public async Task<ICollection<Article>> GetArticlesAsync(int? limit, string category)
         {
-            // TODO(mail@gaein.cn): 支持分类
-            throw new NotSupportedException();
+            // 判空
+            var limitNotNull = limit ?? -1;
+
+            // 查询
+            return await Context.Articles
+                .Where(it=>it.Category == category)
+                .OrderBy(it => it.PostTime.Ticks)
+                .Take(limitNotNull)
+                .ToListAsync();
         }
 
         /// <summary>
         /// 异步获取文章
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <returns>文章Item</returns>
-        public async Task<Article> GetArticleAsync(Guid articleId)
-        {
-            // 判空
-            if (articleId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(articleId));
-            }
-
-            return await Context.Articles
+        /// <returns>文章实体</returns>
+        public async Task<Article> GetArticleAsync(uint articleId) =>
+            await Context.Articles
                 .FirstOrDefaultAsync(it => it.ArticleId == articleId);
-        }
-
 
         /// <summary>
         /// 获取文章
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>文章Item</returns>
-        public Article GetArticle(Guid articleId)
-        {
-            // 判空
-            if (articleId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(articleId));
-            }
-
-            return Context.Articles
+        public Article GetArticle(uint articleId) => 
+            Context.Articles
                 .FirstOrDefault(it => it.ArticleId == articleId);
-        }
-
 
 
         // 更新相关
-
+        
         public bool PatchArticleLike(Article articleItem)
         {
             // 判空
@@ -88,6 +80,7 @@ namespace DotBlog.Server.Services
             articleItem.Like++;
             return SaveChanges();
         }
+
         public bool PatchArticleRead(Article articleItem)
         {
             // 判空
@@ -100,6 +93,7 @@ namespace DotBlog.Server.Services
             articleItem.Read++;
             return SaveChanges();
         }
+
         public Article PutArticle(Article articleOld, Article article)
         {
             // 判空
@@ -121,7 +115,7 @@ namespace DotBlog.Server.Services
             articleOld.Like = article.Like;
             articleOld.Description = article.Description;
             articleOld.IsShown = article.IsShown;
-            
+
             // 返回结果
             return SaveChanges() ? articleOld : null;
         }
@@ -138,10 +132,7 @@ namespace DotBlog.Server.Services
             }
 
             // 赋值给article
-            var articleGuid = Guid.NewGuid();
-            articleItem.ArticleId = articleGuid;
             articleItem.PostTime = DateTime.Now;
-            articleItem.ResourceUri = $"/article/{articleGuid}";
             // 添加文章
             Context.Articles.Add(articleItem);
             // 返回结果
@@ -158,6 +149,7 @@ namespace DotBlog.Server.Services
             {
                 throw new ArgumentNullException(nameof(articleItem));
             }
+
             // 删除文章
             Context.Articles.Remove(articleItem);
             // 返回结果

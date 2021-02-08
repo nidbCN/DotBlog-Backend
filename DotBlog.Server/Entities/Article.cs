@@ -8,7 +8,7 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 文章ID
         /// </summary>
-        public Guid ArticleId { get; set; }
+        public uint ArticleId { get; set; }
 
         /// <summary>
         /// 文章别名
@@ -43,15 +43,10 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 分类
         /// </summary>
-        public Category Category { get; set; }
+        public string Category { get; set; }
 
         /// <summary>
-        /// 分类ID
-        /// </summary>
-        public Guid CategoryId { get; set; }
-
-        /// <summary>
-        /// 发布时间(JavaScript时间戳)
+        /// 发布时间
         /// </summary>
         public DateTime PostTime { get; set; }
 

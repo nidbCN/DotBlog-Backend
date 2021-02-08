@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using DotBlog.Server.Entities;
@@ -9,66 +8,68 @@ namespace DotBlog.Server.Services
     public interface IArticleService
     {
         // 获取相关
-        /// <summary>
-        /// 获取首页文章列表(限制)
-        /// </summary>
-        /// <returns>文章实例列表</returns>
-        Task<List<Article>> GetArticlesAsync(int? limit);
 
         /// <summary>
-        /// 获取首页文章列表(限制, 类别)
+        /// 异步获取首页文章列表(限制)
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="categoryId"></param>
+        /// <param name="limit">数量限制，为null则不限制</param>
         /// <returns>文章实例列表</returns>
-        Task<List<Article>> GetArticlesAsync(int? limit, Guid categoryId);
+        Task<ICollection<Article>> GetArticlesAsync(int? limit);
+
+        /// <summary>
+        /// 异步获取首页文章列表(限制, 类别)
+        /// </summary>
+        /// <param name="limit">数量限制，为null则不限制</param>
+        /// <param name="category">分类名</param>
+        /// <returns>文章实例列表</returns>
+        Task<ICollection<Article>> GetArticlesAsync(int? limit, string category);
 
         /// <summary>
         /// 通过文章ID获得文章实例
         /// </summary>
-        /// <param name="articleId">文章实例</param>
+        /// <param name="articleId">文章ID</param>
         /// <returns>文章实例</returns>
-        Article GetArticle(Guid articleId);
+        Article GetArticle(uint articleId);
 
         /// <summary>
-        /// 通过文章ID获得文章实例
+        /// 通过文章ID异步获得文章实例
         /// </summary>
-        /// <param name="articleId">uint: 文章ID</param>
+        /// <param name="articleId">文章ID</param>
         /// <returns>文章实例</returns>
-        Task<Article> GetArticleAsync(Guid articleId);
+        Task<Article> GetArticleAsync(uint articleId);
 
         // 更新相关
 
         /// <summary>
         /// 更新文章的点赞数
         /// </summary>
-        /// <param name="articleItem">文章ID</param>
+        /// <param name="articleItem">文章实体</param>
         /// <returns>更新结果</returns>
         bool PatchArticleLike(Article articleItem);
 
         /// <summary>
         /// 更新文章已读数
         /// </summary>
-        /// <param name="articleItem">Guid: 文章ID</param>
-        /// <returns>uint: 更新后的已读数</returns>
+        /// <param name="articleItem">文章实体</param>
+        /// <returns>更新结果</returns>
         bool PatchArticleRead(Article articleItem);
 
 
         /// <summary>
         /// 更新文章内容
         /// </summary>
-        /// <param name="articleOld">Guid: 文章ID</param>
-        /// <param name="article">ArticleContent: 文章内容类</param>
-        /// <returns>bool: 保存结果</returns>
-        Article PutArticle(Article articleOld, Article article);
+        /// <param name="articleOld">旧文章实体</param>
+        /// <param name="articleItem">新文章实体</param>
+        /// <returns>更新结果</returns>
+        Article PutArticle(Article articleOld, Article articleItem);
 
         // 写入相关
 
         /// <summary>
         /// 写入新文章
         /// </summary>
-        /// <param name="articleItem">ArticleItem: 新文章</param>
-        /// <returns>bool: 保存结果</returns>
+        /// <param name="articleItem">新文章Dto实体</param>
+        /// <returns>保存结果</returns>
         Article PostArticle(Article articleItem);
 
         // 删除相关
@@ -76,8 +77,8 @@ namespace DotBlog.Server.Services
         /// <summary>
         /// 删除文章
         /// </summary>
-        /// <param name="articleItem"></param>
-        /// <returns></returns>
+        /// <param name="articleItem">要删除的文章实体</param>
+        /// <returns>删除结果</returns>
         bool DeleteArticle(Article articleItem);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using DotBlog.Server.Entities;
 
@@ -10,19 +9,37 @@ namespace DotBlog.Server.Services
         // 获取相关
 
         /// <summary>
-        /// 获取回复
+        /// 通过文章ID获取评论列表
+        /// </summary>
+        /// <param name="articleItem">文章实体</param>
+        /// <returns>回复实体列表</returns>
+        ICollection<Reply> GetReplies(Article articleItem);
+
+        ///// <summary>
+        ///// 通过文章ID异步获取评论列表
+        ///// </summary>
+        ///// <param name="articleItem">文章实体</param>
+        ///// <returns>回复实体列表</returns>
+        //Task<ICollection<Reply>> GetReplies(Article articleItem);
+
+        /// <summary>
+        /// 通过文章ID和回复ID获取回复
         /// </summary>
         /// <param name="articleItem">文章实例</param>
         /// <param name="replyId">回复ID</param>
-        /// <returns>回复实例</returns>
-        Reply GetReply(Article articleItem, Guid replyId);
+        /// <returns>回复实体</returns>
+        Reply GetReply(Article articleItem, uint replyId);
 
-        /// <summary>
-        /// 获取评论列表
-        /// </summary>
-        /// <param name="articleItem">文章实体</param>
-        /// <returns>回复实例列表</returns>
-        ICollection<Reply> GetReplies(Article articleItem);
+
+        ///// <summary>
+        ///// 通过文章ID和回复ID异步获取回复
+        ///// </summary>
+        ///// <param name="articleItem">文章实例</param>
+        ///// <param name="replyId">回复ID</param>
+        ///// <returns>回复实体</returns>
+        //Task<Reply> GetReplyAsync(Article articleItem, uint replyId);
+
+
 
         // 更新相关
 
@@ -30,7 +47,7 @@ namespace DotBlog.Server.Services
         /// 更新回复的点赞数
         /// </summary>
         /// <param name="articleItem">文章实体</param>
-        /// <param name="replyItem">回复ID</param>
+        /// <param name="replyItem">回复实体</param>
         /// <returns>更新结果</returns>
         bool PatchReplyLike(Article articleItem, Reply replyItem);
 
@@ -40,9 +57,9 @@ namespace DotBlog.Server.Services
         /// 写入新评论
         /// </summary>
         /// <param name="articleItem">文章实体</param>
-        /// <param name="reply">新评论实体</param>
+        /// <param name="replyItem">新回复实体</param>
         /// <returns>更新的实体</returns>
-        Reply PostReply(Article articleItem, Reply reply);
+        Reply PostReply(Article articleItem, Reply replyItem);
 
         // 删除相关
 

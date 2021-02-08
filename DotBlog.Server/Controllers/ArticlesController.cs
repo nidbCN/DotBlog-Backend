@@ -1,12 +1,14 @@
 ﻿using System.Threading.Tasks;
+using System.Text.Json;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using DotBlog.Server.Models;
-using DotBlog.Server.Services;
-using System.Text.Json;
-using System;
+using AutoMapper;
+using Masuit.Tools.Html;
 using DotBlog.Server.Entities;
+using DotBlog.Server.Services;
+using DotBlog.Server.Models;
 
 namespace DotBlog.Server.Controllers
 {
@@ -14,16 +16,25 @@ namespace DotBlog.Server.Controllers
     [ApiController]
     public class ArticlesController : ControllerBase
     {
+        // 通过DI注入的只读服务
         private IArticleService ArticleService { get; }
         private ILogger<ArticlesController> Logger { get; }
+        private IMapper Mapper { get; }
 
-        private IActionResult ResetContent() => StatusCode(205);
-        private IActionResult InternalServerError() => StatusCode(500);
+        // 自定义返回类型
+        private StatusCodeResult ResetContent() => StatusCode(205);
+        private StatusCodeResult InternalServerError() => StatusCode(500);
 
-        public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger)
+        // 自定义字段
+        private JsonSerializerOptions PrintOptions { get; }
+            = new() { WriteIndented = true };
+
+        // 构造函数
+        public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger, IMapper mapper)
         {
             ArticleService = articleService;
             Logger = logger;
+            Mapper = mapper;
         }
 
         /// <summary>
@@ -32,7 +43,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="limit">限制数</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<IActionResult> GetArticles([FromQuery] int? limit)
+        public async Task<ActionResult<ICollection<ArticlesDto>>> GetArticles([FromQuery] int? limit)
         {
             Logger.LogInformation($"Match method {nameof(GetArticles)}.");
             // 获取文章列表
@@ -40,18 +51,15 @@ namespace DotBlog.Server.Controllers
             // 判空
             if (articleList == null)
             {
-                Logger.LogWarning("No articles were found, can not return list.");
-                return Ok(
-                    new ReturnUniversally(null, 0, 404, "No articles found.")
-                );
+                Logger.LogInformation("No articles were found, return a empty list.");
+                return Ok();
             }
 
-            Logger.LogDebug($"Find article: {JsonSerializer.Serialize(articleList)}");
+            Logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articleList, PrintOptions)}");
 
-            // 转换通用结果
-            var articleRetList = ReturnArticles.Convert(articleList);
+            // 返回Dto结果
             return Ok(
-                new ReturnUniversally(articleRetList, (uint)articleRetList.Count)
+                Mapper.Map<ICollection<ArticlesDto>>(articleList)
             );
         }
 
@@ -61,32 +69,32 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200/ HTTP 404 / HTTP 400</returns>
         [HttpGet("{articleId}")]
-        public async Task<IActionResult> GetArticle([FromRoute] Guid articleId)
+        public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] uint? articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetArticle)}.");
 
             // 判空
-            if (articleId == Guid.Empty)
+            if (articleId == null)
             {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
                 return BadRequest();
             }
 
             // 获取文章
-            var articleItem = await ArticleService.GetArticleAsync(articleId);
+            var articleItem = await ArticleService.GetArticleAsync((uint)articleId);
 
             // 判空
             if (articleItem == null)
             {
-                Logger.LogWarning("No article was found, can not return item.");
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            Logger.LogDebug($"Find article: {JsonSerializer.Serialize(articleItem)}");
+            Logger.LogDebug($"Find article: {JsonSerializer.Serialize(articleItem, PrintOptions)}");
 
-            // 转换通用结果
-            var articleRetItem = ReturnArticle.Convert(articleItem);
+            // 返回Dto结果
             return Ok(
-                new ReturnUniversally(articleRetItem, 1)
+                Mapper.Map<ArticleDto>(articleItem)
             );
         }
 
@@ -95,27 +103,41 @@ namespace DotBlog.Server.Controllers
         /// 更新文章
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <param name="articleItem">文章实例</param>
+        /// <param name="articleItemDto">文章实例</param>
         /// <returns>HTTP 200 / HTTP 404 / HTTP 400 / HTTP 500?</returns>
         //[Authorize]
         [HttpPut("{articleId}")]
-        public IActionResult PutArticle([FromRoute] Guid articleId, [FromBody] Article articleItem)
+        public ActionResult<ArticleDto> PutArticle([FromRoute] uint? articleId, [FromBody] ArticleDto articleItemDto)
         {
             Logger.LogInformation($"Match method {nameof(PutArticle)}.");
-            if (articleItem == null)
+            // 判空
+            if (articleItemDto == null || articleId == null)
             {
+                Logger.LogInformation($"No {nameof(articleItemDto)} or {nameof(articleId)} input, return a BadRequest.");
                 return BadRequest();
             }
 
-            var articleOld = ArticleService.GetArticle(articleId);
+            // 安全检查
+            articleItemDto.Category.HtmlSantinizerStandard();
+            articleItemDto.Author.HtmlSantinizerStandard();
+            articleItemDto.Title.HtmlSantinizerStandard();
+            articleItemDto.Content.HtmlSantinizerStandard();
+            articleItemDto.Description.HtmlSantinizerStandard();
+            
+            // Dto映射为实体
+            var articleItem = Mapper.Map<Article>(articleItemDto);
+
+            // 获取旧文章
+            var articleOld = ArticleService.GetArticle((uint)articleId);
 
             if (articleOld == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             var result = ArticleService.PutArticle(articleOld, articleItem);
-            return result != null ? Ok() : StatusCode(500);
+            return result != null ? Ok(result) : InternalServerError();
         }
 
         /// <summary>
@@ -124,25 +146,29 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
         [HttpPatch("{articleId}/Like")]
-        public IActionResult PatchArticleLike([FromRoute] Guid articleId)
+        public IActionResult PatchArticleLike([FromRoute] uint? articleId)
         {
             Logger.LogInformation($"Match method {nameof(PatchArticleLike)}.");
 
             // 判空
-            if (articleId == Guid.Empty)
+            if (articleId == null)
             {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
                 return BadRequest();
             }
 
             // 获取文章
-            var article = ArticleService.GetArticle(articleId);
+            var articleItem = ArticleService.GetArticle((uint)articleId);
 
             // 判断是否找到文章
-            if (article == null)
+            // ReSharper disable once InvertIf
+            if (articleItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
-            return ArticleService.PatchArticleLike(article)
+
+            return ArticleService.PatchArticleLike(articleItem)
                 ? ResetContent()
                 : InternalServerError();
         }
@@ -153,21 +179,23 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
         [HttpPatch("{articleId}/Read")]
-        public IActionResult PatchArticleRead([FromRoute] Guid articleId)
+        public IActionResult PatchArticleRead([FromRoute] uint? articleId)
         {
             Logger.LogInformation($"Match method {nameof(PatchArticleRead)}.");
 
             // 判空
-            if (articleId == Guid.Empty)
+            if (articleId == null)
             {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
                 return BadRequest();
             }
 
-            var article = ArticleService.GetArticle(articleId);
+            var article = ArticleService.GetArticle((uint)articleId);
 
             if (article == null)
             {
-                return BadRequest();
+                Logger.LogInformation("No article was found, return a NotFound.");
+                return NotFound();
             }
 
             return ArticleService.PatchArticleRead(article)
@@ -178,18 +206,28 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 新建文章
         /// </summary>
-        /// <param name="articleItem">文章实例</param>
+        /// <param name="articleItemDto">文章实例</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         //[Authorize]
         [HttpPost]
-        public IActionResult PostArticle([FromBody] Article articleItem)
+        public IActionResult PostArticle([FromBody] ArticleDto articleItemDto)
         {
-            Logger.LogInformation($"Match method {nameof(PutArticle)}.");
+            Logger.LogInformation($"Match method {nameof(PostArticle)}.");
 
-            if (articleItem == null)
+            if (articleItemDto == null)
             {
+                Logger.LogInformation($"No {nameof(articleItemDto)} input, return a BadRequest.");
                 return BadRequest();
             }
+
+            // 安全检查
+            articleItemDto.Category.HtmlSantinizerStandard();
+            articleItemDto.Author.HtmlSantinizerStandard();
+            articleItemDto.Title.HtmlSantinizerStandard();
+            articleItemDto.Content.HtmlSantinizerStandard();
+            articleItemDto.Description.HtmlSantinizerStandard();
+
+            var articleItem = Mapper.Map<Article>(articleItemDto);
 
             var result = ArticleService.PostArticle(articleItem);
             return result != null
@@ -204,20 +242,23 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 204 / HTTP 404 / HTTP 400 /HTTP 500?</returns>
         //[Authorize]
         [HttpDelete("{articleId}")]
-        public IActionResult DeleteArticle([FromRoute] Guid articleId)
+        public IActionResult DeleteArticle([FromRoute] uint? articleId)
         {
             Logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
-            if (articleId == Guid.Empty)
+            if (articleId == null)
             {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
                 return BadRequest();
             }
-            var article = ArticleService.GetArticle(articleId);
+
+            var article = ArticleService.GetArticle((uint)articleId);
 
             if (article == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
-            return ArticleService.DeleteArticle(article) 
+            return ArticleService.DeleteArticle(article)
                 ? ResetContent()
                 : InternalServerError();
         }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 using DotBlog.Server.Data;
 using DotBlog.Server.Services;
+using System;
 
 namespace DotBlog.Server
 {
@@ -30,6 +31,8 @@ namespace DotBlog.Server
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
             );
 
+            // 注册服务 AutoMapper 对象映射器
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             // 注册服务
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<IReplyService, ReplyService>();

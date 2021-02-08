@@ -17,9 +17,14 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
-        public Reply GetReply(Article articleItem, Guid replyId) =>
+        public Reply GetReply(Article articleItem, uint replyId) =>
             articleItem?.Replies?
                 .FirstOrDefault(it => it.ReplyId == replyId);
+
+        //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
+        //{
+            
+        //}
 
         public ICollection<Reply> GetReplies(Article articleItem)
         {
@@ -62,11 +67,8 @@ namespace DotBlog.Server.Services
             }
 
             // 新建回复
-            var replyId = Guid.NewGuid();
-            reply.ReplyId = replyId;
             reply.ArticleId = articleItem.ArticleId;
             reply.ReplyTime = DateTime.Now;
-            reply.ResourceUri = $"/article/{articleItem.ArticleId}/reply/{replyId}";
 
             if (!reply.Link.MatchUrl() || !reply.Mail.MatchEmail().isMatch)
             {
