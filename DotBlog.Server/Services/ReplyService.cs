@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
+using Masuit.Tools;
 using DotBlog.Server.Data;
 using DotBlog.Server.Entities;
-using Masuit.Tools;
 
 namespace DotBlog.Server.Services
 {
@@ -19,76 +17,79 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
-        /// <summary>
-        /// 获取评论列表
-        /// </summary>
-        /// <param name="articleId">Guid: 文章ID</param>
-        /// <returns>List[Reply]: 回复实例列表</returns>
-        public async Task<List<Reply>> GetReplies(Guid articleId) =>
-            await Context.Replies
-                .Where(it => it.ArticleId == articleId)
-                .ToListAsync();
+        public Reply GetReply(Article articleItem, Guid replyId) =>
+            articleItem?.Replies?
+                .FirstOrDefault(it => it.ReplyId == replyId);
 
-        /// <summary>
-        /// 获取回复
-        /// </summary>
-        /// <param name="articleId">文章ID</param>
-        /// <param name="replyId">回复ID</param>
-        /// <returns>Reply: 回复实例</returns>
-        private async Task<Reply> GetReply(Guid articleId, Guid replyId)
+        public ICollection<Reply> GetReplies(Article articleItem)
         {
-            var articleItem = await Context.Articles
-                .FirstOrDefaultAsync(it => it.ArticleId == articleId);
-            return articleItem.Replies
-                .Find(it => it.ReplyId == replyId);
-        }
-
-
-        /// <summary>
-        /// 更新回复的点赞数
-        /// </summary>
-        /// <param name="replyId">Guid: 回复ID</param>
-        /// <param name="articleId">Guid: 文章ID</param>
-        /// <returns>uint: 更新后的点赞数</returns>
-        public async Task<bool> PatchReplyLike(Guid articleId, Guid replyId)
-        {
-            var replyItem = await GetReply(articleId, replyId);
-            replyItem.Like++;
-            return await SaveChanges();
-        }
-
-        public async Task<Reply> PostReply(Guid articleId, Reply reply)
-        {
-            var replyId = Guid.NewGuid();
-
-            reply.ReplyId = replyId;
-            reply.ArticleId = articleId;
-            reply.ReplyTime = DateTime.Now;
-            reply.ResourceUri = $"/article/{articleId}/reply/{replyId}";
-
-            if (reply.Link.MatchUrl() && reply.Mail.MatchEmail().isMatch)
+            // 判空
+            if (articleItem == null)
             {
-                // await Context.Replies.AddAsync(reply);
-                var articleItem = await Context.Articles.FirstOrDefaultAsync(it => it.ArticleId == articleId);
-                articleItem.Replies.Add(reply);
-                if (await SaveChanges())
-                {
-                    return reply;
-                }
+                throw new ArgumentNullException(nameof(articleItem));
             }
 
-            return null;
+            return articleItem.Replies;
         }
 
-        public async Task<bool> DeleteReply(Guid articleId, Guid replyId)
+        public bool PatchReplyLike(Article articleItem, Reply replyItem)
         {
-            Context.Replies.Remove(
-                await Context.Replies.FirstOrDefaultAsync(it => it.ArticleId == articleId)
-            );
-            return await SaveChanges();
+            // 判空
+            if (articleItem == null)
+            {
+                throw new ArgumentNullException(nameof(articleItem));
+            }
+            if (replyItem == null)
+            {
+                throw new ArgumentNullException(nameof(replyItem));
+            }
+
+            // 自增
+            replyItem.Like++;
+            return SaveChanges();
         }
 
-        private async Task<bool> SaveChanges() =>
-            await Context.SaveChangesAsync() > 0;
+        public Reply PostReply(Article articleItem, Reply reply)
+        {
+            // 判空
+            if (articleItem == null)
+            {
+                throw new ArgumentNullException(nameof(articleItem));
+            }
+            if (reply == null)
+            {
+                throw new ArgumentNullException(nameof(reply));
+            }
+
+            // 新建回复
+            var replyId = Guid.NewGuid();
+            reply.ReplyId = replyId;
+            reply.ArticleId = articleItem.ArticleId;
+            reply.ReplyTime = DateTime.Now;
+            reply.ResourceUri = $"/article/{articleItem.ArticleId}/reply/{replyId}";
+
+            if (!reply.Link.MatchUrl() || !reply.Mail.MatchEmail().isMatch)
+            {
+                return null;
+            }
+
+            Context.Replies.Add(reply);
+            SaveChanges();
+            return reply;
+        }
+
+        public bool DeleteReply(Article articleItem, Reply replyItem)
+        {
+            // 删除
+            Context.Replies.Remove(replyItem);
+            return SaveChanges();
+        }
+
+        /// <summary>
+        /// 保存更改
+        /// </summary>
+        /// <returns>保存结果</returns>
+        private bool SaveChanges() =>
+            Context.SaveChanges() > 0;
     }
 }

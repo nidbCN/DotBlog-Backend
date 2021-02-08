@@ -18,54 +18,98 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
-
         // 获取相关
 
-        public async Task<List<Article>> GetArticles(int? limit)
+        public async Task<List<Article>> GetArticlesAsync(int? limit)
         {
-            var limitInt = limit ??= -1;
-
+            // 判空limit
+            var limitInt = (limit ??= -1);
+            // 返回列表
             return await Context.Articles
                 .OrderBy(it => it.PostTime.Ticks)
                 .Take(limitInt)
                 .ToListAsync();
         }
-        public async Task<Article> GetArticle(Guid articleId) =>
-            await Context.Articles
+
+        public /*async*/ Task<List<Article>> GetArticlesAsync(int? limit, Guid categoryId)
+        {
+            // TODO(mail@gaein.cn): 支持分类
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// 异步获取文章
+        /// </summary>
+        /// <param name="articleId">文章ID</param>
+        /// <returns>文章Item</returns>
+        public async Task<Article> GetArticleAsync(Guid articleId)
+        {
+            // 判空
+            if (articleId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(articleId));
+            }
+
+            return await Context.Articles
                 .FirstOrDefaultAsync(it => it.ArticleId == articleId);
+        }
+
+
+        /// <summary>
+        /// 获取文章
+        /// </summary>
+        /// <param name="articleId">文章ID</param>
+        /// <returns>文章Item</returns>
+        public Article GetArticle(Guid articleId)
+        {
+            // 判空
+            if (articleId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(articleId));
+            }
+
+            return Context.Articles
+                .FirstOrDefault(it => it.ArticleId == articleId);
+        }
+
 
 
         // 更新相关
 
-        public async Task<bool> PatchArticleLike(Guid articleId)
+        public bool PatchArticleLike(Article articleItem)
         {
-            var article = await GetArticle(articleId);
-            if (article == null)
+            // 判空
+            if (articleItem == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(articleItem));
             }
 
-            article.Like++;
-            return await SaveChanges();
+            // 自增
+            articleItem.Like++;
+            return SaveChanges();
         }
-        public async Task<bool> PatchArticleRead(Guid articleId)
+        public bool PatchArticleRead(Article articleItem)
         {
-            var article = await GetArticle(articleId);
-            if (article == null)
+            // 判空
+            if (articleItem == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(articleItem));
             }
 
-            article.Read++;
-
-            return await SaveChanges();
+            // 自增
+            articleItem.Read++;
+            return SaveChanges();
         }
-        public async Task<Article> PutArticle(Guid articleId, Article article)
+        public Article PutArticle(Article articleOld, Article article)
         {
-            var articleOld = await GetArticle(articleId);
+            // 判空
             if (articleOld == null)
             {
-                return null;
+                throw new ArgumentNullException(nameof(articleOld));
+            }
+            if (article == null)
+            {
+                throw new ArgumentNullException(nameof(article));
             }
 
             // 更新文章内容
@@ -77,41 +121,61 @@ namespace DotBlog.Server.Services
             articleOld.Like = article.Like;
             articleOld.Description = article.Description;
             articleOld.IsShown = article.IsShown;
-
-            return await SaveChanges() ? articleOld : null;
+            
+            // 返回结果
+            return SaveChanges() ? articleOld : null;
         }
 
 
         // 写入相关
 
-        public async Task<Article> PostArticle(Article article)
+        public Article PostArticle(Article articleItem)
         {
-            var articleId = Guid.NewGuid();
-            article.ArticleId = articleId;
-            article.PostTime = DateTime.Now;
-            article.ResourceUri = $"/article/{articleId}";
-            await Context.Articles
-                .AddAsync(article);
-            return await SaveChanges() ? article: null;
+            // 判空
+            if (articleItem == null)
+            {
+                throw new ArgumentNullException(nameof(articleItem));
+            }
+
+            // 赋值给article
+            var articleGuid = Guid.NewGuid();
+            articleItem.ArticleId = articleGuid;
+            articleItem.PostTime = DateTime.Now;
+            articleItem.ResourceUri = $"/article/{articleGuid}";
+            // 添加文章
+            Context.Articles.Add(articleItem);
+            // 返回结果
+            return SaveChanges() ? articleItem : null;
         }
 
 
         // 删除相关
 
-        public async Task<bool> DeleteArticle(Guid articleId)
+        public bool DeleteArticle(Article articleItem)
         {
-            Context.Articles.Remove(
-                await GetArticle(articleId)
-            );
-
-            return await SaveChanges();
+            // 判空
+            if (articleItem == null)
+            {
+                throw new ArgumentNullException(nameof(articleItem));
+            }
+            // 删除文章
+            Context.Articles.Remove(articleItem);
+            // 返回结果
+            return SaveChanges();
         }
+
+        ///// <summary>
+        ///// 保存更改异步
+        ///// </summary>
+        ///// <returns>保存结果</returns>
+        //private async Task<bool> SaveChangesAsync() =>
+        //    await Context.SaveChangesAsync() > 0;
 
         /// <summary>
         /// 保存更改
         /// </summary>
         /// <returns>保存结果</returns>
-        private async Task<bool> SaveChanges() =>
-            await Context.SaveChangesAsync() > 0;
+        private bool SaveChanges() =>
+            Context.SaveChanges() > 0;
     }
 }

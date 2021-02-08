@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace DotBlog.Server.Entities
+namespace DotBlog.Server.Models
 {
-    public class Article
+    public class ArticlesListDto
     {
+
         /// <summary>
         /// 文章ID
         /// </summary>
@@ -28,7 +28,7 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 是否展示在首页上
         /// </summary>
-        public bool IsShown { get; set; }
+        public bool IsShown { get; set; } = true;
 
         /// <summary>
         /// 阅读数
@@ -41,44 +41,13 @@ namespace DotBlog.Server.Entities
         public uint Like { get; set; } = 0;
 
         /// <summary>
-        /// 分类
-        /// </summary>
-        public Category Category { get; set; }
-
-        /// <summary>
-        /// 分类ID
-        /// </summary>
-        public Guid CategoryId { get; set; }
-
-        /// <summary>
         /// 发布时间(JavaScript时间戳)
         /// </summary>
         public DateTime PostTime { get; set; }
 
         /// <summary>
-        /// 作者
-        /// </summary>
-        public string Author { get; set; }
-
-        /// <summary>
-        /// 文章内容
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
         /// 资源URI
         /// </summary>
         public string ResourceUri { get; set; }
-
-        /// <summary>
-        /// 回复
-        /// </summary>
-        public ICollection<Reply> Replies { get; set; }
-
-        // /// <summary>
-        // /// List[string]: 标签
-        // /// </summary>
-        // TODO(mail@gaein.cn)
-        // public List<string> Tags { get; set; }
     }
 }

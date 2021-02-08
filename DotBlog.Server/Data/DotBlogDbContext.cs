@@ -15,7 +15,7 @@ namespace DotBlog.Server.Data
         /// 文章表
         /// </summary>
         public DbSet<Article> Articles { get; set; }
-        
+
         /// <summary>
         /// 回复表
         /// </summary>
@@ -25,10 +25,17 @@ namespace DotBlog.Server.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // 设置对应关系
+            
             modelBuilder.Entity<Reply>()
                 .HasOne(it => it.Article)
                 .WithMany(it=>it.Replies)
                 .HasForeignKey(it => it.ArticleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Article>()
+                .HasOne(it => it.Category)
+                .WithMany(it => it.Articles)
+                .HasForeignKey(it => it.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

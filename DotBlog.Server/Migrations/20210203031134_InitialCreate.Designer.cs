@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DotBlog.Server.Migrations
 {
     [DbContext(typeof(DotBlogDbContext))]
-    [Migration("20210202040241_InitialCreate")]
+    [Migration("20210203031134_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -116,7 +116,7 @@ namespace DotBlog.Server.Migrations
                     b.HasOne("DotBlog.Server.Entities.Article", "Article")
                         .WithMany("Replies")
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Article");

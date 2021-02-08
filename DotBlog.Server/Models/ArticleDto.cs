@@ -1,36 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Models
 {
-    public class ReturnArticle
+    public class ArticleDto
     {
-        public static ReturnArticle Convert(Article articleItem)
-        {
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
-
-            var articleRetItem = new ReturnArticle()
-            {
-                ArticleId = articleItem.ArticleId,
-                Category = articleItem.Category,
-                Content = articleItem.Content,
-                Description = articleItem.Description,
-                Like = articleItem.Like,
-                PostTime = articleItem.PostTime,
-                Read = articleItem.Read,
-                ResourceUri = articleItem.ResourceUri,
-                // Tags = articleItem.Tags,
-                Title = articleItem.Title
-            };
-
-            return articleRetItem;
-        }
-
         /// <summary>
         /// 文章ID
         /// </summary>

@@ -114,7 +114,7 @@ namespace DotBlog.Server.Migrations
                     b.HasOne("DotBlog.Server.Entities.Article", "Article")
                         .WithMany("Replies")
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Article");
