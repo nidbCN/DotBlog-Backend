@@ -8,7 +8,10 @@ namespace DotBlog.Server.Profiles
     {
         public ArticlesProfile()
         {
-            CreateMap<Article, ArticlesDto>();
+            CreateMap<Article, ArticlesDto>().ForMember(dest => dest.ResourceUri, 
+                opt => opt
+                    .MapFrom(src => $"Articles/{src.ArticleId}")
+            );
         }
     }
 }

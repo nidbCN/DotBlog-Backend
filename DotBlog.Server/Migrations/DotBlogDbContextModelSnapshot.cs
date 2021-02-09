@@ -18,9 +18,9 @@ namespace DotBlog.Server.Migrations
 
             modelBuilder.Entity("DotBlog.Server.Entities.Article", b =>
                 {
-                    b.Property<Guid>("ArticleId")
+                    b.Property<uint>("ArticleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Alias")
                         .HasColumnType("TEXT");
@@ -57,17 +57,19 @@ namespace DotBlog.Server.Migrations
 
                     b.HasKey("ArticleId");
 
+                    b.HasIndex("ArticleId");
+
                     b.ToTable("Articles");
                 });
 
             modelBuilder.Entity("DotBlog.Server.Entities.Reply", b =>
                 {
-                    b.Property<Guid>("ReplyId")
+                    b.Property<uint>("ReplyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("TEXT");
+                    b.Property<uint>("ArticleId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Author")
                         .HasColumnType("TEXT");
@@ -90,8 +92,8 @@ namespace DotBlog.Server.Migrations
                     b.Property<DateTime>("ReplyTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ReplyTo")
-                        .HasColumnType("TEXT");
+                    b.Property<uint>("ReplyTo")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ResourceUri")
                         .HasColumnType("TEXT");
@@ -106,6 +108,8 @@ namespace DotBlog.Server.Migrations
 
                     b.HasIndex("ArticleId");
 
+                    b.HasIndex("ReplyId");
+
                     b.ToTable("Replies");
                 });
 
@@ -114,7 +118,7 @@ namespace DotBlog.Server.Migrations
                     b.HasOne("DotBlog.Server.Entities.Article", "Article")
                         .WithMany("Replies")
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Article");

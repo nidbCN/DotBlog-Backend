@@ -11,7 +11,8 @@ namespace DotBlog.Server.Migrations
                 name: "Articles",
                 columns: table => new
                 {
-                    ArticleId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ArticleId = table.Column<uint>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Alias = table.Column<string>(type: "TEXT", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
@@ -33,12 +34,13 @@ namespace DotBlog.Server.Migrations
                 name: "Replies",
                 columns: table => new
                 {
-                    ReplyId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ReplyId = table.Column<uint>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     UserPlatform = table.Column<string>(type: "TEXT", nullable: true),
                     UserExplore = table.Column<string>(type: "TEXT", nullable: true),
                     AvatarUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    ArticleId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ReplyTo = table.Column<Guid>(type: "TEXT", nullable: false),
+                    ArticleId = table.Column<uint>(type: "INTEGER", nullable: false),
+                    ReplyTo = table.Column<uint>(type: "INTEGER", nullable: false),
                     Like = table.Column<uint>(type: "INTEGER", nullable: false),
                     Author = table.Column<string>(type: "TEXT", nullable: true),
                     Content = table.Column<string>(type: "TEXT", nullable: true),
@@ -55,13 +57,23 @@ namespace DotBlog.Server.Migrations
                         column: x => x.ArticleId,
                         principalTable: "Articles",
                         principalColumn: "ArticleId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Articles_ArticleId",
+                table: "Articles",
+                column: "ArticleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Replies_ArticleId",
                 table: "Replies",
                 column: "ArticleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Replies_ReplyId",
+                table: "Replies",
+                column: "ReplyId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

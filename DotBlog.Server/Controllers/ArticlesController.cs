@@ -69,19 +69,12 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200/ HTTP 404 / HTTP 400</returns>
         [HttpGet("{articleId}")]
-        public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] uint? articleId)
+        public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetArticle)}.");
 
-            // 判空
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
-
             // 获取文章
-            var articleItem = await ArticleService.GetArticleAsync((uint)articleId);
+            var articleItem = await ArticleService.GetArticleAsync(articleId);
 
             // 判空
             if (articleItem == null)
@@ -107,13 +100,13 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 200 / HTTP 404 / HTTP 400 / HTTP 500?</returns>
         //[Authorize]
         [HttpPut("{articleId}")]
-        public ActionResult<ArticleDto> PutArticle([FromRoute] uint? articleId, [FromBody] ArticleDto articleItemDto)
+        public ActionResult<ArticleDto> PutArticle([FromRoute] uint articleId, [FromBody] ArticleDto articleItemDto)
         {
             Logger.LogInformation($"Match method {nameof(PutArticle)}.");
             // 判空
-            if (articleItemDto == null || articleId == null)
+            if (articleItemDto == null)
             {
-                Logger.LogInformation($"No {nameof(articleItemDto)} or {nameof(articleId)} input, return a BadRequest.");
+                Logger.LogInformation($"No {nameof(articleItemDto)} input, return a BadRequest.");
                 return BadRequest();
             }
 
@@ -128,7 +121,7 @@ namespace DotBlog.Server.Controllers
             var articleItem = Mapper.Map<Article>(articleItemDto);
 
             // 获取旧文章
-            var articleOld = ArticleService.GetArticle((uint)articleId);
+            var articleOld = ArticleService.GetArticle(articleId);
 
             if (articleOld == null)
             {
@@ -146,19 +139,12 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
         [HttpPatch("{articleId}/Like")]
-        public IActionResult PatchArticleLike([FromRoute] uint? articleId)
+        public IActionResult PatchArticleLike([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(PatchArticleLike)}.");
 
-            // 判空
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
-
             // 获取文章
-            var articleItem = ArticleService.GetArticle((uint)articleId);
+            var articleItem = ArticleService.GetArticle(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
@@ -179,18 +165,11 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
         [HttpPatch("{articleId}/Read")]
-        public IActionResult PatchArticleRead([FromRoute] uint? articleId)
+        public IActionResult PatchArticleRead([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(PatchArticleRead)}.");
 
-            // 判空
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
-
-            var article = ArticleService.GetArticle((uint)articleId);
+            var article = ArticleService.GetArticle(articleId);
 
             if (article == null)
             {
@@ -230,9 +209,14 @@ namespace DotBlog.Server.Controllers
             var articleItem = Mapper.Map<Article>(articleItemDto);
 
             var result = ArticleService.PostArticle(articleItem);
-            return result != null
-                ? Created(result.ResourceUri, result)
-                : Accepted();
+
+            if (result == null)
+            {
+                return Accepted();
+            }
+
+            var resultDto = Mapper.Map<ArticleDto>(result);
+            return Created(resultDto.ResourceUri, resultDto);
         }
 
         /// <summary>
@@ -242,16 +226,11 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 204 / HTTP 404 / HTTP 400 /HTTP 500?</returns>
         //[Authorize]
         [HttpDelete("{articleId}")]
-        public IActionResult DeleteArticle([FromRoute] uint? articleId)
+        public IActionResult DeleteArticle([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
 
-            var article = ArticleService.GetArticle((uint)articleId);
+            var article = ArticleService.GetArticle(articleId);
 
             if (article == null)
             {

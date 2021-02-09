@@ -45,17 +45,12 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<ActionResult<ICollection<ReplyDto>>> GetReplies([FromRoute] uint? articleId)
+        public async Task<ActionResult<ICollection<ReplyDto>>> GetReplies([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetReplies)}.");
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
 
             // 获取文章
-            var articleItem = await ArticleService.GetArticleAsync((uint)articleId);
+            var articleItem = await ArticleService.GetArticleAsync(articleId);
             // 判空
             if (articleItem == null)
             {
@@ -75,23 +70,18 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
         [HttpPatch("{replyId}/Like")]
-        public IActionResult PatchReplyLike([FromRoute] uint? articleId, [FromRoute] uint? replyId)
+        public IActionResult PatchReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
             Logger.LogInformation($"Match method {nameof(PatchReplyLike)}.");
-            if (articleId == null || replyId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} or {nameof(replyId)} input, return a BadRequest.");
-                return BadRequest();
-            }
 
-            var articleItem = ArticleService.GetArticle((uint)articleId);
+            var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = ReplyService.GetReply(articleItem, (uint)replyId);
+            var replyItem = ReplyService.GetReply(articleItem, replyId);
 
             if (replyItem == null)
             {
@@ -111,15 +101,11 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyItemDto">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public ActionResult<ReplyDto> PostReply([FromRoute] uint? articleId, [FromBody] ReplyDto replyItemDto)
+        public ActionResult<ReplyDto> PostReply([FromRoute] uint articleId, [FromBody] ReplyDto replyItemDto)
         {
-            if (articleId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
-                return BadRequest();
-            }
+            Logger.LogInformation($"Match method {nameof(PostReply)}.");
 
-            var articleItem = ArticleService.GetArticle((uint)articleId);
+            var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
@@ -152,22 +138,18 @@ namespace DotBlog.Server.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpDelete("{replyId}")]
-        public IActionResult DeleteReply([FromRoute] uint? articleId, [FromRoute] uint? replyId)
+        public IActionResult DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            if (articleId == null || replyId == null)
-            {
-                Logger.LogInformation($"No {nameof(articleId)} or {nameof(replyId)} input, return a BadRequest.");
-                return BadRequest();
-            }
+            Logger.LogInformation($"Match method {nameof(DeleteReply)}.");
 
-            var articleItem = ArticleService.GetArticle((uint)articleId);
+            var articleItem = ArticleService.GetArticle(articleId);
             if (articleItem == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = ReplyService.GetReply(articleItem, (uint)replyId);
+            var replyItem = ReplyService.GetReply(articleItem, replyId);
 
             if (replyItem == null)
             {
