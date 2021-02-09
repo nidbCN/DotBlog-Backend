@@ -17,15 +17,22 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
-        public Reply GetReply(Article articleItem, uint replyId) =>
-            articleItem?.Replies?
-                .FirstOrDefault(it => it.ReplyId == replyId);
+        public Reply GetReply(Article articleItem, uint replyId)
+        {
+            if (articleItem == null)
+            {
+                throw new ArgumentNullException(nameof(articleItem));
+            }
+
+            return Context.Replies.FirstOrDefault(it => it.Article == articleItem);
+        }
 
         //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
         //{
             
         //}
 
+        // TODO(mail@gaein.cn): 科学的获取回复
         public ICollection<Reply> GetReplies(Article articleItem)
         {
             // 判空
@@ -34,7 +41,9 @@ namespace DotBlog.Server.Services
                 throw new ArgumentNullException(nameof(articleItem));
             }
 
-            return articleItem.Replies;
+            return Context.Replies.Where(it => it.Article == articleItem).ToList();
+
+            // return articleItem.Replies;
         }
 
         public bool PatchReplyLike(Article articleItem, Reply replyItem)

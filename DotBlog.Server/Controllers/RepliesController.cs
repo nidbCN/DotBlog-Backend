@@ -12,7 +12,7 @@ using DotBlog.Server.Services;
 
 namespace DotBlog.Server.Controllers
 {
-    [Route(Startup.ApiVersion + "Articles/{articleId}/[controller]")]
+    [Route(Startup.ApiVersion + "/Articles/{articleId}/[controller]")]
     [ApiController]
     public class RepliesController : ControllerBase
     {
@@ -57,9 +57,12 @@ namespace DotBlog.Server.Controllers
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
+
+            var replies = ReplyService.GetReplies(articleItem);
+
             // 返回评论列表
             return Ok(
-                Mapper.Map<ICollection<ReplyDto>>(ReplyService.GetReplies(articleItem))
+                Mapper.Map<ICollection<ReplyDto>>(replies)
             );
         }
 
@@ -85,7 +88,7 @@ namespace DotBlog.Server.Controllers
 
             if (replyItem == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                Logger.LogInformation("No reply was found, return a NotFound.");
                 return NotFound();
             }
 
@@ -120,14 +123,19 @@ namespace DotBlog.Server.Controllers
             replyItemDto.UserExplore?.HtmlSantinizerStandard();
             replyItemDto.UserExplore?.HtmlSantinizerStandard();
 
-            Logger.LogInformation(JsonSerializer.Serialize(replyItemDto, PrintOptions));
+            Logger.LogInformation("Get input data:\n"+JsonSerializer.Serialize(replyItemDto, PrintOptions));
 
             var replyItem = Mapper.Map<Reply>(replyItemDto);
 
             var result = ReplyService.PostReply(articleItem, replyItem);
-            return result == null
-                ? Accepted()
-                : Created(result.ResourceUri, result);
+
+            if (result == null)
+            {
+                return Accepted();
+            }
+
+            var resultDto = Mapper.Map<ReplyDto>(result);
+            return Created(resultDto.ResourceUri, resultDto);
         }
 
         /// <summary>

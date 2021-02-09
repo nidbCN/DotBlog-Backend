@@ -63,10 +63,5 @@ namespace DotBlog.Server.Entities
         /// 评论时间(JavaScript时间戳)
         /// </summary>
         public DateTime ReplyTime { get; set; }
-
-        /// <summary>
-        /// 资源URI
-        /// </summary>
-        public string ResourceUri { get; set; }
     }
 }

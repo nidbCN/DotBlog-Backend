@@ -61,11 +61,6 @@ namespace DotBlog.Server.Entities
         public string Content { get; set; }
 
         /// <summary>
-        /// 资源URI
-        /// </summary>
-        public string ResourceUri { get; set; }
-
-        /// <summary>
         /// 回复
         /// </summary>
         public ICollection<Reply> Replies { get; set; }
