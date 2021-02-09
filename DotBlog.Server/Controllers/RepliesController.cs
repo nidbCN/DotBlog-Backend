@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,6 @@ using DotBlog.Server.Services;
 
 namespace DotBlog.Server.Controllers
 {
-    // TODO(mail@gaein.cn): 更新Log
     [Route(Startup.ApiVersion + "Articles/{articleId}/[controller]")]
     [ApiController]
     public class RepliesController : ControllerBase
@@ -45,17 +45,27 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<IActionResult> GetReplies([FromRoute] uint articleId)
+        public async Task<ActionResult<ICollection<ReplyDto>>> GetReplies([FromRoute] uint? articleId)
         {
+            Logger.LogInformation($"Match method {nameof(GetReplies)}.");
+            if (articleId == null)
+            {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
+                return BadRequest();
+            }
+
             // 获取文章
-            var articleItem = await ArticleService.GetArticleAsync(articleId);
+            var articleItem = await ArticleService.GetArticleAsync((uint)articleId);
             // 判空
             if (articleItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
             // 返回评论列表
-            return Ok(ReplyService.GetReplies(articleItem));
+            return Ok(
+                Mapper.Map<ICollection<ReplyDto>>(ReplyService.GetReplies(articleItem))
+            );
         }
 
         /// <summary>
@@ -65,17 +75,27 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
         [HttpPatch("{replyId}/Like")]
-        public IActionResult PatchReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public IActionResult PatchReplyLike([FromRoute] uint? articleId, [FromRoute] uint? replyId)
         {
-            var articleItem = ArticleService.GetArticle(articleId);
+            Logger.LogInformation($"Match method {nameof(PatchReplyLike)}.");
+            if (articleId == null || replyId == null)
+            {
+                Logger.LogInformation($"No {nameof(articleId)} or {nameof(replyId)} input, return a BadRequest.");
+                return BadRequest();
+            }
+
+            var articleItem = ArticleService.GetArticle((uint)articleId);
             if (articleItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
-            
-            var replyItem = ReplyService.GetReply(articleItem, replyId);
+
+            var replyItem = ReplyService.GetReply(articleItem, (uint)replyId);
+
             if (replyItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
@@ -91,11 +111,18 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyItemDto">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public IActionResult PostReply([FromRoute] uint articleId, [FromBody] ReplyDto replyItemDto)
+        public ActionResult<ReplyDto> PostReply([FromRoute] uint? articleId, [FromBody] ReplyDto replyItemDto)
         {
-            var articleItem = ArticleService.GetArticle(articleId);
+            if (articleId == null)
+            {
+                Logger.LogInformation($"No {nameof(articleId)} input, return a BadRequest.");
+                return BadRequest();
+            }
+
+            var articleItem = ArticleService.GetArticle((uint)articleId);
             if (articleItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
@@ -125,18 +152,26 @@ namespace DotBlog.Server.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpDelete("{replyId}")]
-        public IActionResult DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public IActionResult DeleteReply([FromRoute] uint? articleId, [FromRoute] uint? replyId)
         {
-            var articleItem = ArticleService.GetArticle(articleId);
+            if (articleId == null || replyId == null)
+            {
+                Logger.LogInformation($"No {nameof(articleId)} or {nameof(replyId)} input, return a BadRequest.");
+                return BadRequest();
+            }
+
+            var articleItem = ArticleService.GetArticle((uint)articleId);
             if (articleItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = ReplyService.GetReply(articleItem, replyId);
+            var replyItem = ReplyService.GetReply(articleItem, (uint)replyId);
 
             if (replyItem == null)
             {
+                Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 

@@ -123,7 +123,7 @@ namespace DotBlog.Server.Controllers
             articleItemDto.Title.HtmlSantinizerStandard();
             articleItemDto.Content.HtmlSantinizerStandard();
             articleItemDto.Description.HtmlSantinizerStandard();
-            
+
             // Dto映射为实体
             var articleItem = Mapper.Map<Article>(articleItemDto);
 
