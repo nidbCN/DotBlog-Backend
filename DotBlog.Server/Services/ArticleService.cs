@@ -26,7 +26,7 @@ namespace DotBlog.Server.Services
         {
             // 判空
             var limitNotNull = limit ?? -1;
-            
+
             // 查询
             return await Context.Articles
                 .OrderBy(it => it.PostTime.Ticks)
@@ -41,70 +41,51 @@ namespace DotBlog.Server.Services
 
             // 查询
             return await Context.Articles
-                .Where(it=>it.Category == category)
+                .Where(it => it.Category == category)
                 .OrderBy(it => it.PostTime.Ticks)
                 .Take(limitNotNull)
                 .ToListAsync();
         }
 
-        /// <summary>
-        /// 异步获取文章
-        /// </summary>
-        /// <param name="articleId">文章ID</param>
-        /// <returns>文章实体</returns>
         public async Task<Article> GetArticleAsync(uint articleId) =>
             await Context.Articles
                 .FirstOrDefaultAsync(it => it.ArticleId == articleId);
 
-        /// <summary>
-        /// 获取文章
-        /// </summary>
-        /// <param name="articleId">文章ID</param>
-        /// <returns>文章Item</returns>
-        public Article GetArticle(uint articleId) => 
+        public Article GetArticle(uint articleId) =>
             Context.Articles
                 .FirstOrDefault(it => it.ArticleId == articleId);
 
 
         // 更新相关
-        
-        public bool PatchArticleLike(Article articleItem)
+
+        public void PatchArticleLike(Article article)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            article = article
+                      ?? throw new ArgumentNullException(nameof(article));
 
             // 自增
-            articleItem.Like++;
-            return SaveChanges();
+            article.Like++;
         }
 
-        public bool PatchArticleRead(Article articleItem)
+        public void PatchArticleRead(Article article)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            article = article
+                      ?? throw new ArgumentNullException(nameof(article));
 
             // 自增
-            articleItem.Read++;
-            return SaveChanges();
+            article.Read++;
         }
 
         public Article PutArticle(Article articleOld, Article article)
         {
+
             // 判空
-            if (articleOld == null)
-            {
-                throw new ArgumentNullException(nameof(articleOld));
-            }
-            if (article == null)
-            {
-                throw new ArgumentNullException(nameof(article));
-            }
+            articleOld = articleOld 
+                         ?? throw new ArgumentNullException(nameof(articleOld));
+            article = article 
+                      ?? throw new ArgumentNullException(nameof(article));
 
             // 更新文章内容
             // TODO(mail@gaein.cn): 用更好的方法来实现这一段代码
@@ -117,57 +98,43 @@ namespace DotBlog.Server.Services
             articleOld.IsShown = article.IsShown;
 
             // 返回结果
-            return SaveChanges() ? articleOld : null;
+            return articleOld;
         }
 
 
         // 写入相关
 
-        public Article PostArticle(Article articleItem)
+        public Article PostArticle(Article article)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            article = article
+                      ?? throw new ArgumentNullException(nameof(article));
 
             // 赋值给article
-            articleItem.PostTime = DateTime.Now;
+            article.PostTime = DateTime.Now;
             // 添加文章
-            Context.Articles.Add(articleItem);
+            Context.Articles.Add(article);
             // 返回结果
-            return SaveChanges() ? articleItem : null;
+            return article;
         }
 
 
         // 删除相关
 
-        public bool DeleteArticle(Article articleItem)
+        public void DeleteArticle(Article article)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            article = article
+                      ?? throw new ArgumentNullException(nameof(article));
 
-            // 删除文章
-            Context.Articles.Remove(articleItem);
-            // 返回结果
-            return SaveChanges();
+                // 删除文章
+            Context.Articles.Remove(article);
         }
 
-        ///// <summary>
-        ///// 保存更改异步
-        ///// </summary>
-        ///// <returns>保存结果</returns>
-        //private async Task<bool> SaveChangesAsync() =>
-        //    await Context.SaveChangesAsync() > 0;
+        public async Task<bool> SaveChangesAsync() =>
+            await Context.SaveChangesAsync() > 0;
 
-        /// <summary>
-        /// 保存更改
-        /// </summary>
-        /// <returns>保存结果</returns>
-        private bool SaveChanges() =>
+        public bool SaveChanges() =>
             Context.SaveChanges() > 0;
     }
 }

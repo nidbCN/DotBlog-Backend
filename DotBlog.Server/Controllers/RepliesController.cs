@@ -17,9 +17,25 @@ namespace DotBlog.Server.Controllers
     public class RepliesController : ControllerBase
     {
         // 通过DI注入的只读服务
+
+        /// <summary>
+        /// 文章操作服务
+        /// </summary>
         private IArticleService ArticleService { get; }
+
+        /// <summary>
+        /// 回复操作服务
+        /// </summary>
         private IReplyService ReplyService { get; }
+
+        /// <summary>
+        /// 日志记录服务
+        /// </summary>
         private ILogger<RepliesController> Logger { get; }
+
+        /// <summary>
+        /// 对象映射服务
+        /// </summary>
         private IMapper Mapper { get; }
 
         // 自定义返回类型
@@ -44,23 +60,25 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200</returns>
-        [HttpGet]
+        [HttpGet(Name = nameof(GetReplies))]
         public async Task<ActionResult<ICollection<ReplyDto>>> GetReplies([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetReplies)}.");
 
             // 获取文章
-            var articleItem = await ArticleService.GetArticleAsync(articleId);
-            // 判空
-            if (articleItem == null)
+            var article = await ArticleService.GetArticleAsync(articleId);
+
+            // 判断是否找到文章
+            if (article == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replies = ReplyService.GetReplies(articleItem);
+            // 获取回复
+            var replies = ReplyService.GetReplies(article);
 
-            // 返回评论列表
+            // 返回评论Dto结果
             return Ok(
                 Mapper.Map<ICollection<ReplyDto>>(replies)
             );
@@ -73,69 +91,97 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
         [HttpPatch("{replyId}/Like")]
-        public IActionResult PatchReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public async Task<IActionResult> PatchReplyLikeAsync([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(PatchReplyLike)}.");
+            Logger.LogInformation($"Match method {nameof(PatchReplyLikeAsync)}.");
 
-            var articleItem = ArticleService.GetArticle(articleId);
-            if (articleItem == null)
+            // 获取文章
+            var article = await ArticleService.GetArticleAsync(articleId);
+
+            // 判断是否找到文章
+            if (article == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = ReplyService.GetReply(articleItem, replyId);
+            // 获取回复
+            var reply = await ReplyService.GetReplyAsync(article, replyId);
 
-            if (replyItem == null)
+            // 判断是否找到回复
+            // ReSharper disable once InvertIf
+            if (reply == null)
             {
                 Logger.LogInformation("No reply was found, return a NotFound.");
                 return NotFound();
             }
 
-            return ReplyService.PatchReplyLike(articleItem, replyItem)
-                ? ResetContent()
-                : InternalServerError();
+            // 更新回复点赞
+            ReplyService.PatchReplyLike(reply);
+
+            // ReSharper disable once InvertIf
+            if (!await ReplyService.SaveChangesAsync())
+            {
+                Logger.LogError("Cannot save changes, UnKnow error.");
+                return InternalServerError();
+            }
+
+            // 返回结果
+            return ResetContent();
         }
 
         /// <summary>
         /// 新建回复
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <param name="replyItemDto">回复</param>
+        /// <param name="inputReply">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public ActionResult<ReplyDto> PostReply([FromRoute] uint articleId, [FromBody] ReplyInputDto replyItemDto)
+        public async Task<ActionResult<ReplyDto>> PostReplyAsync([FromRoute] uint articleId, [FromBody] ReplyInputDto inputReply)
         {
-            Logger.LogInformation($"Match method {nameof(PostReply)}.");
+            Logger.LogInformation($"Match method {nameof(PostReplyAsync)}.");
 
-            var articleItem = ArticleService.GetArticle(articleId);
-            if (articleItem == null)
+            // 获取文章
+            var article = await ArticleService.GetArticleAsync(articleId);
+
+            // 判断是否找到文章
+            if (article == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            replyItemDto.Content?.HtmlSantinizerStandard();
-            replyItemDto.Author?.HtmlSantinizerStandard();
-            replyItemDto.AvatarUrl?.HtmlSantinizerStandard();
-            replyItemDto.Link?.HtmlSantinizerStandard();
-            replyItemDto.Mail?.HtmlSantinizerStandard();
-            replyItemDto.UserExplore?.HtmlSantinizerStandard();
-            replyItemDto.UserExplore?.HtmlSantinizerStandard();
+            // 安全检查
+            inputReply.Content?.HtmlSantinizerStandard();
+            inputReply.Author?.HtmlSantinizerStandard();
+            inputReply.AvatarUrl?.HtmlSantinizerStandard();
+            inputReply.Link?.HtmlSantinizerStandard();
+            inputReply.Mail?.HtmlSantinizerStandard();
+            inputReply.UserExplore?.HtmlSantinizerStandard();
+            inputReply.UserExplore?.HtmlSantinizerStandard();
 
-            Logger.LogInformation("Get input data:\n"+JsonSerializer.Serialize(replyItemDto, PrintOptions));
+            Logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, PrintOptions));
 
-            var replyItem = Mapper.Map<Reply>(replyItemDto);
+            // Dto映射为实体
+            var reply = Mapper.Map<Reply>(inputReply);
 
-            var result = ReplyService.PostReply(articleItem, replyItem);
+            // 回复文章
+            var result = ReplyService.PostReply(article, reply);
 
             if (result == null)
             {
                 return Accepted();
             }
 
-            var resultDto = Mapper.Map<ReplyDto>(result);
-            return Created(resultDto.ResourceUri, resultDto);
+            if (!await ReplyService.SaveChangesAsync())
+            {
+                Logger.LogError("Cannot save changes, UnKnow error.");
+                return InternalServerError();
+            }
+
+            // 返回结果
+            var returnDto = Mapper.Map<ReplyDto>(result);
+            return CreatedAtRoute(nameof(GetReplies), new { replyId = returnDto.ReplyId }, returnDto);
         }
 
         /// <summary>
@@ -146,28 +192,40 @@ namespace DotBlog.Server.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpDelete("{replyId}")]
-        public IActionResult DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public async Task<IActionResult> DeleteReplyAsync([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(DeleteReply)}.");
+            Logger.LogInformation($"Match method {nameof(DeleteReplyAsync)}.");
 
-            var articleItem = ArticleService.GetArticle(articleId);
-            if (articleItem == null)
+            // 获取文章
+            var article = await ArticleService.GetArticleAsync(articleId);
+
+            // 判断是否找到文章
+            if (article == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = ReplyService.GetReply(articleItem, replyId);
+            var replyItem = await ReplyService.GetReplyAsync(article, replyId);
 
+            // 判断是否找到回复
+            // ReSharper disable once InvertIf
             if (replyItem == null)
             {
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            return ReplyService.DeleteReply(articleItem, replyItem)
-                ? ResetContent()
-                : InternalServerError();
+            ReplyService.DeleteReply(replyItem);
+
+            // ReSharper disable once InvertIf
+            if (!await ReplyService.SaveChangesAsync())
+            {
+                Logger.LogError("Cannot save changes, UnKnow error.");
+                return InternalServerError();
+            }
+
+            return ResetContent();
 
         }
 

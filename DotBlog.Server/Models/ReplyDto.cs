@@ -5,6 +5,11 @@ namespace DotBlog.Server.Models
     public class ReplyDto
     {
         /// <summary>
+        /// 回复ID
+        /// </summary>
+        public uint ReplyId { get; set; }
+
+        /// <summary>
         /// 用户平台
         /// </summary>
         public string UserPlatform { get; set; }
@@ -52,10 +57,5 @@ namespace DotBlog.Server.Models
         /// 评论时间(JavaScript时间戳)
         /// </summary>
         public DateTime ReplyTime { get; set; }
-
-        /// <summary>
-        /// 资源URI
-        /// </summary>
-        public string ResourceUri { get; set; }
     }
 }

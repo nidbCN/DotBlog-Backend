@@ -10,14 +10,14 @@ namespace DotBlog.Server.Services
         // 获取相关
 
         /// <summary>
-        /// 异步获取首页文章列表(限制)
+        /// [异步]获取首页文章列表(限制)
         /// </summary>
         /// <param name="limit">数量限制，为null则不限制</param>
         /// <returns>文章实例列表</returns>
         Task<ICollection<Article>> GetArticlesAsync(int? limit);
 
         /// <summary>
-        /// 异步获取首页文章列表(限制, 类别)
+        /// [异步]获取首页文章列表(限制, 类别)
         /// </summary>
         /// <param name="limit">数量限制，为null则不限制</param>
         /// <param name="category">分类名</param>
@@ -32,7 +32,7 @@ namespace DotBlog.Server.Services
         Article GetArticle(uint articleId);
 
         /// <summary>
-        /// 通过文章ID异步获得文章实例
+        /// [异步]通过文章ID获得文章实例
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>文章实例</returns>
@@ -43,42 +43,54 @@ namespace DotBlog.Server.Services
         /// <summary>
         /// 更新文章的点赞数
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
+        /// <param name="article">文章实体</param>
         /// <returns>更新结果</returns>
-        bool PatchArticleLike(Article articleItem);
+        void PatchArticleLike(Article article);
 
         /// <summary>
         /// 更新文章已读数
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
+        /// <param name="article">文章实体</param>
         /// <returns>更新结果</returns>
-        bool PatchArticleRead(Article articleItem);
+        void PatchArticleRead(Article article);
 
 
         /// <summary>
         /// 更新文章内容
         /// </summary>
         /// <param name="articleOld">旧文章实体</param>
-        /// <param name="articleItem">新文章实体</param>
+        /// <param name="article">新文章实体</param>
         /// <returns>更新结果</returns>
-        Article PutArticle(Article articleOld, Article articleItem);
+        Article PutArticle(Article articleOld, Article article);
 
         // 写入相关
 
         /// <summary>
         /// 写入新文章
         /// </summary>
-        /// <param name="articleItem">新文章Dto实体</param>
+        /// <param name="article">新文章Dto实体</param>
         /// <returns>保存结果</returns>
-        Article PostArticle(Article articleItem);
+        Article PostArticle(Article article);
 
         // 删除相关
 
         /// <summary>
         /// 删除文章
         /// </summary>
-        /// <param name="articleItem">要删除的文章实体</param>
+        /// <param name="article">要删除的文章实体</param>
         /// <returns>删除结果</returns>
-        bool DeleteArticle(Article articleItem);
+        void DeleteArticle(Article article);
+
+        /// <summary>
+        /// [异步]保存更改
+        /// </summary>
+        /// <returns>保存结果</returns>
+        Task<bool> SaveChangesAsync();
+
+        /// <summary>
+        /// 保存更改
+        /// </summary>
+        /// <returns>保存结果</returns>
+        bool SaveChanges();
     }
 }

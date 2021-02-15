@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DotBlog.Server.Models
 {
@@ -16,6 +16,7 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 头像网址
         /// </summary>
+        [Url]
         public string AvatarUrl { get; set; }
 
         /// <summary>
@@ -26,21 +27,24 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 评论者
         /// </summary>
-        public string Author { get; set; }
+        public string Author { get; set; } = "Anonymous";
 
         /// <summary>
         /// 评论内容
         /// </summary>
+        [Required]
         public string Content { get; set; }
 
         /// <summary>
         /// 链接
         /// </summary>
+        [Url]
         public string Link { get; set; }
 
         /// <summary>
         /// 邮箱
         /// </summary>
+        [EmailAddress]
         public string Mail { get; set; }
     }
 }

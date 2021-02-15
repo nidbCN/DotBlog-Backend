@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 using Masuit.Tools;
 using DotBlog.Server.Data;
 using DotBlog.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotBlog.Server.Services
 {
@@ -17,67 +18,52 @@ namespace DotBlog.Server.Services
             Context = context;
         }
 
-        public Reply GetReply(Article articleItem, uint replyId)
+        public async Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
         {
             if (articleItem == null)
             {
                 throw new ArgumentNullException(nameof(articleItem));
             }
 
-            return Context.Replies.FirstOrDefault(it => it.Article == articleItem);
+            return await Context.Replies.FirstOrDefaultAsync(it => it.Article == articleItem);
         }
 
         //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
         //{
-            
+
         //}
 
         // TODO(mail@gaein.cn): 科学的获取回复
-        public ICollection<Reply> GetReplies(Article articleItem)
+        public async Task<ICollection<Reply>> GetReplies(Article article)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            article = article
+                      ?? throw new ArgumentNullException(nameof(article));
 
-            return Context.Replies.Where(it => it.Article == articleItem).ToList();
+            return await Context.Replies.Where(it => it.Article == article).ToListAsync();
 
             // return articleItem.Replies;
         }
 
-        public bool PatchReplyLike(Article articleItem, Reply replyItem)
+        public void PatchReplyLike(Reply reply)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
-            if (replyItem == null)
-            {
-                throw new ArgumentNullException(nameof(replyItem));
-            }
+            reply = reply
+                    ?? throw new ArgumentNullException(nameof(reply));
 
             // 自增
-            replyItem.Like++;
-            return SaveChanges();
+            reply.Like++;
         }
 
-        public Reply PostReply(Article articleItem, Reply reply)
+        public Reply PostReply(Article article, Reply reply)
         {
             // 判空
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
-            if (reply == null)
-            {
-                throw new ArgumentNullException(nameof(reply));
-            }
+            reply = reply
+                    ?? throw new ArgumentNullException(nameof(reply));
+
 
             // 新建回复
-            reply.ArticleId = articleItem.ArticleId;
-            reply.ReplyTime = DateTime.Now;
+            reply.ArticleId = article.ArticleId;
 
             if (!reply.Link.MatchUrl() || !reply.Mail.MatchEmail().isMatch)
             {
@@ -85,22 +71,23 @@ namespace DotBlog.Server.Services
             }
 
             Context.Replies.Add(reply);
-            SaveChanges();
             return reply;
         }
 
-        public bool DeleteReply(Article articleItem, Reply replyItem)
+        public void DeleteReply(Reply reply)
         {
+            reply = reply
+                    ?? throw new ArgumentNullException(nameof(reply));
+
             // 删除
-            Context.Replies.Remove(replyItem);
-            return SaveChanges();
+            Context.Replies.Remove(reply);
         }
 
-        /// <summary>
-        /// 保存更改
-        /// </summary>
-        /// <returns>保存结果</returns>
-        private bool SaveChanges() =>
+
+        public async Task<bool> SaveChangesAsync() =>
+            await Context.SaveChangesAsync() > 0;
+
+        public bool SaveChanges() =>
             Context.SaveChanges() > 0;
     }
 }

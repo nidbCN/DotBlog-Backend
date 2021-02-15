@@ -9,7 +9,7 @@ namespace DotBlog.Server.Profiles
     {
         public ReplyDtoProfile()
         {
-            CreateMap<ReplyInputDto, Reply>();
+            
         }
     }
 }

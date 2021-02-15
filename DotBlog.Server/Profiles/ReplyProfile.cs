@@ -9,11 +9,9 @@ namespace DotBlog.Server.Profiles
     {
         public ReplyProfile()
         {
-            CreateMap<Reply, ReplyDto>()
-                .ForMember(dest => dest.ResourceUri,
-                    opt => opt
-                        .MapFrom(src => $"Articles/{src.ArticleId}/Replies/{src.ReplyId}")
-                );
+            CreateMap<Reply, ReplyDto>();
+
+            CreateMap<ReplyInputDto, Reply>();
         }
     }
 }

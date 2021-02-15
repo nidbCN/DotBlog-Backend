@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Threading.Tasks;
 using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Services
@@ -9,66 +9,59 @@ namespace DotBlog.Server.Services
         // 获取相关
 
         /// <summary>
-        /// 通过文章ID获取评论列表
+        /// [异步]通过文章ID获取评论列表
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
+        /// <param name="article">文章实体</param>
         /// <returns>回复实体列表</returns>
-        ICollection<Reply> GetReplies(Article articleItem);
+        Task<ICollection<Reply>> GetReplies(Article article);
 
-        ///// <summary>
-        ///// 通过文章ID异步获取评论列表
-        ///// </summary>
-        ///// <param name="articleItem">文章实体</param>
-        ///// <returns>回复实体列表</returns>
-        //Task<ICollection<Reply>> GetReplies(Article articleItem);
 
         /// <summary>
-        /// 通过文章ID和回复ID获取回复
+        /// [异步]通过文章ID和回复ID获取回复
         /// </summary>
-        /// <param name="articleItem">文章实例</param>
+        /// <param name="article">文章实例</param>
         /// <param name="replyId">回复ID</param>
         /// <returns>回复实体</returns>
-        Reply GetReply(Article articleItem, uint replyId);
-
-
-        ///// <summary>
-        ///// 通过文章ID和回复ID异步获取回复
-        ///// </summary>
-        ///// <param name="articleItem">文章实例</param>
-        ///// <param name="replyId">回复ID</param>
-        ///// <returns>回复实体</returns>
-        //Task<Reply> GetReplyAsync(Article articleItem, uint replyId);
-
-
+        Task<Reply> GetReplyAsync(Article article, uint replyId);
 
         // 更新相关
 
         /// <summary>
         /// 更新回复的点赞数
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
-        /// <param name="replyItem">回复实体</param>
+        /// <param name="reply">回复实体</param>
         /// <returns>更新结果</returns>
-        bool PatchReplyLike(Article articleItem, Reply replyItem);
+        void PatchReplyLike(Reply reply);
 
         // 写入相关
 
         /// <summary>
         /// 写入新评论
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
-        /// <param name="replyItem">新回复实体</param>
+        /// <param name="article">文章实体</param>
+        /// <param name="reply">新回复实体</param>
         /// <returns>更新的实体</returns>
-        Reply PostReply(Article articleItem, Reply replyItem);
+        Reply PostReply(Article article, Reply reply);
 
         // 删除相关
 
         /// <summary>
         /// 删除评论
         /// </summary>
-        /// <param name="articleItem">文章实体</param>
-        /// <param name="replyItem">回复ID</param>
+        /// <param name="reply">回复ID</param>
         /// <returns>删除结果</returns>
-        bool DeleteReply(Article articleItem, Reply replyItem);
+        void DeleteReply(Reply reply);
+
+        /// <summary>
+        /// [异步]保存更改
+        /// </summary>
+        /// <returns>保存结果</returns>
+        Task<bool> SaveChangesAsync();
+
+        /// <summary>
+        /// 保存更改
+        /// </summary>
+        /// <returns>保存结果</returns>
+        bool SaveChanges();
     }
 }

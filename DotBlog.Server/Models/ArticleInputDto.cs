@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DotBlog.Server.Models
 {
@@ -7,11 +8,13 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 文章别名
         /// </summary>
+        [Required]
         public string Alias { get; set; }
 
         /// <summary>
         /// 文章标题
         /// </summary>
+        [Required]
         public string Title { get; set; }
 
         /// <summary>
@@ -27,11 +30,12 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 作者
         /// </summary>
-        public string Author { get; set; }
+        public string Author { get; set; } = "Anonymous";
 
         /// <summary>
         /// 文章内容
         /// </summary>
+        [Required]
         public string Content { get; set; }
 
         // /// <summary>

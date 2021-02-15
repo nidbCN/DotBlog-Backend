@@ -5,6 +5,11 @@ namespace DotBlog.Server.Models
     public class ArticleDto
     {
         /// <summary>
+        /// 文章ID
+        /// </summary>
+        public uint ArticleId { get; set; }
+
+        /// <summary>
         /// 文章别名
         /// </summary>
         public string Alias { get; set; }
@@ -48,11 +53,6 @@ namespace DotBlog.Server.Models
         /// 文章内容
         /// </summary>
         public string Content { get; set; }
-
-        /// <summary>
-        /// 资源URI
-        /// </summary>
-        public string ResourceUri { get; set; }
 
         // /// <summary>
         // /// List[string]: 标签
