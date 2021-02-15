@@ -19,21 +19,25 @@ namespace DotBlog.Server
             Configuration = configuration;
         }
 
+        /// <summary>
+        /// API °æ±¾
+        /// </summary>
         public const string ApiVersion = "v1";
 
         public IConfiguration Configuration { get; }
 
-        // ï¿½ï¿½ï¿½ï¿½×¢ï¿½ë·½ï¿½ï¿½
+        // ·þÎñ×¢ÈëÅäÖÃ
         public void ConfigureServices(IServiceCollection services)
         {
-            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // Ìí¼ÓÊý¾Ý¿âÉÏÏÂÎÄ
             services.AddDbContext<DotBlogDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
             );
 
-            // ×¢ï¿½ï¿½ï¿½ï¿½ï¿½ AutoMapper ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½
+            // Ìí¼Ó AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            // ×¢ï¿½ï¿½ï¿½ï¿½ï¿½
+            
+            // Ìí¼ÓÎÄÕÂ¡¢»Ø¸´·þÎñ
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<IReplyService, ReplyService>();
 
@@ -45,7 +49,7 @@ namespace DotBlog.Server
             });
         }
 
-        // HTTPï¿½Üµï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ï¿½
+        // HTTP ¹ÜµÀÖÐ¼ä¼þÅäÖÃ
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
