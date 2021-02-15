@@ -22,12 +22,12 @@ namespace DotBlog.Server.Models
         /// <summary>
         /// 阅读数
         /// </summary>
-        public uint Read { get; set; } = 0;
+        public uint Read { get; set; }
 
         /// <summary>
         /// 点赞数
         /// </summary>
-        public uint Like { get; set; } = 0;
+        public uint Like { get; set; }
 
         /// <summary>
         /// 分类

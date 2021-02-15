@@ -43,7 +43,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="limit">限制数</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<ActionResult<ICollection<ArticlesDto>>> GetArticles([FromQuery] int? limit)
+        public async Task<ActionResult<ICollection<ArticleListDto>>> GetArticles([FromQuery] int? limit)
         {
             Logger.LogInformation($"Match method {nameof(GetArticles)}.");
             // 获取文章列表
@@ -59,7 +59,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ICollection<ArticlesDto>>(articleList)
+                Mapper.Map<ICollection<ArticleListDto>>(articleList)
             );
         }
 
@@ -103,12 +103,6 @@ namespace DotBlog.Server.Controllers
         public ActionResult<ArticleDto> PutArticle([FromRoute] uint articleId, [FromBody] ArticleDto articleItemDto)
         {
             Logger.LogInformation($"Match method {nameof(PutArticle)}.");
-            // 判空
-            if (articleItemDto == null)
-            {
-                Logger.LogInformation($"No {nameof(articleItemDto)} input, return a BadRequest.");
-                return BadRequest();
-            }
 
             // 安全检查
             articleItemDto.Category.HtmlSantinizerStandard();
@@ -192,12 +186,6 @@ namespace DotBlog.Server.Controllers
         public IActionResult PostArticle([FromBody] ArticleDto articleItemDto)
         {
             Logger.LogInformation($"Match method {nameof(PostArticle)}.");
-
-            if (articleItemDto == null)
-            {
-                Logger.LogInformation($"No {nameof(articleItemDto)} input, return a BadRequest.");
-                return BadRequest();
-            }
 
             // 安全检查
             articleItemDto.Category.HtmlSantinizerStandard();

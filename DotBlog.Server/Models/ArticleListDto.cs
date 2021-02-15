@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace DotBlog.Server.Entities
+namespace DotBlog.Server.Models
 {
-    public class Article
+    public class ArticleListDto
     {
         /// <summary>
-        /// 文章ID
+        /// 文章总数
         /// </summary>
-        public uint ArticleId { get; set; }
+        public uint Count { get; set; }
 
         /// <summary>
         /// 文章别名
@@ -33,12 +32,12 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 阅读数
         /// </summary>
-        public uint Read { get; set; } = 0;
+        public uint Read { get; set; }
 
         /// <summary>
         /// 点赞数
         /// </summary>
-        public uint Like { get; set; } = 0;
+        public uint Like { get; set; }
 
         /// <summary>
         /// 分类
@@ -48,22 +47,12 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PostTime { get; set; } = DateTime.Now;
+        public DateTime PostTime { get; set; }
 
         /// <summary>
         /// 作者
         /// </summary>
         public string Author { get; set; }
-
-        /// <summary>
-        /// 文章内容
-        /// </summary>
-        public string Content { get; set; }
-
-        /// <summary>
-        /// 回复
-        /// </summary>
-        public ICollection<Reply> Replies { get; set; }
 
         // /// <summary>
         // /// List[string]: 标签

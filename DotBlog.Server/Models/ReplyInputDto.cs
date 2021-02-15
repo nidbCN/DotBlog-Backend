@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace DotBlog.Server.Entities
+namespace DotBlog.Server.Models
 {
-    public class Reply
+    public class ReplyInputDto
     {
-        public Article Article { get; set; }
         /// <summary>
         /// 用户平台
         /// </summary>
@@ -20,24 +19,9 @@ namespace DotBlog.Server.Entities
         public string AvatarUrl { get; set; }
 
         /// <summary>
-        /// 评论的文章ID
-        /// </summary>
-        public uint ArticleId { get; set; }
-
-        /// <summary>
-        /// 某条评论的ID
-        /// </summary>
-        public uint ReplyId { get; set; }
-
-        /// <summary>
         /// 回复给某条评论ID
         /// </summary>
         public uint ReplyTo { get; set; }
-
-        /// <summary>
-        /// 点赞数
-        /// </summary>
-        public uint Like { get; set; } = 0;
 
         /// <summary>
         /// 评论者
@@ -58,10 +42,5 @@ namespace DotBlog.Server.Entities
         /// 邮箱
         /// </summary>
         public string Mail { get; set; }
-
-        /// <summary>
-        /// 评论时间
-        /// </summary>
-        public DateTime ReplyTime { get; set; } = DateTime.Now;
     }
 }

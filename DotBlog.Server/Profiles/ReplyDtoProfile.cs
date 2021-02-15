@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 
@@ -8,7 +9,7 @@ namespace DotBlog.Server.Profiles
     {
         public ReplyDtoProfile()
         {
-            CreateMap<ReplyDto, Reply>();
+            CreateMap<ReplyInputDto, Reply>();
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public class ArticlesDto
+    public class ArticleInputDto
     {
         /// <summary>
         /// 文章别名
@@ -20,29 +20,9 @@ namespace DotBlog.Server.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// 是否展示在首页上
-        /// </summary>
-        public bool IsShown { get; set; }
-
-        /// <summary>
-        /// 阅读数
-        /// </summary>
-        public uint Read { get; set; } = 0;
-
-        /// <summary>
-        /// 点赞数
-        /// </summary>
-        public uint Like { get; set; } = 0;
-
-        /// <summary>
         /// 分类
         /// </summary>
         public string Category { get; set; }
-
-        /// <summary>
-        /// 发布时间
-        /// </summary>
-        public DateTime PostTime { get; set; }
 
         /// <summary>
         /// 作者
@@ -50,9 +30,9 @@ namespace DotBlog.Server.Models
         public string Author { get; set; }
 
         /// <summary>
-        /// 资源URI
+        /// 文章内容
         /// </summary>
-        public string ResourceUri { get; set; }
+        public string Content { get; set; }
 
         // /// <summary>
         // /// List[string]: 标签

@@ -104,7 +104,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyItemDto">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public ActionResult<ReplyDto> PostReply([FromRoute] uint articleId, [FromBody] ReplyDto replyItemDto)
+        public ActionResult<ReplyDto> PostReply([FromRoute] uint articleId, [FromBody] ReplyInputDto replyItemDto)
         {
             Logger.LogInformation($"Match method {nameof(PostReply)}.");
 
