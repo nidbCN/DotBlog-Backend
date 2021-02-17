@@ -1,6 +1,6 @@
 ﻿namespace DotBlog.Server.Models
 {
-    public class ArticleDto : ArticleOutputDto
+    public class ArticleUpdateDto : ArticleInputDto
     {
         // 无特殊字段
     }

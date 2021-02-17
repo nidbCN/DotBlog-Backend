@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 using DotBlog.Server.Data;
 using DotBlog.Server.Services;
-using System;
 
 namespace DotBlog.Server
 {

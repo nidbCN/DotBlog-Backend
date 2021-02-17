@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 
@@ -9,9 +8,11 @@ namespace DotBlog.Server.Profiles
     {
         public ReplyProfile()
         {
+            // 从回复实体到输出Dto的映射
             CreateMap<Reply, ReplyDto>();
 
-            CreateMap<ReplyInputDto, Reply>();
+            // 从输入Dto到回复实体的映射
+            CreateMap<ReplyAddDto, Reply>();
         }
     }
 }

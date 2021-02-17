@@ -1,47 +1,49 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using Masuit.Tools.Html;
 
 namespace DotBlog.Server.Models
 {
-    public class ArticleInputDto
+    public abstract class ArticleInputDto : ArticleUniversalDto
     {
         /// <summary>
-        /// 文章别名
+        /// 是否展示在首页上
         /// </summary>
-        [Required]
-        public string Alias { get; set; }
+        public bool IsShown { get; set; }
 
-        /// <summary>
-        /// 文章标题
-        /// </summary>
-        [Required]
-        public string Title { get; set; }
+        private string _author;
+        private string _category;
+        private string _content;
+        private string _description;
+        private string _title;
+        // 重写父类的字段
 
-        /// <summary>
-        /// 文章简介
-        /// </summary>
-        public string Description { get; set; }
+        public override string Author
+        {
+            get => _author;
+            set => _author = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 分类
-        /// </summary>
-        public string Category { get; set; }
+        public override string Category
+        {
+            get => _category;
+            set => _category = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 作者
-        /// </summary>
-        public string Author { get; set; } = "Anonymous";
+        public override string Content
+        {
+            get => _content;
+            set => _content = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 文章内容
-        /// </summary>
-        [Required]
-        public string Content { get; set; }
+        public override string Description
+        {
+            get => _description;
+            set => _description = value.HtmlSantinizerStandard();
+        }
 
-        // /// <summary>
-        // /// List[string]: 标签
-        // /// </summary>
-        // TODO(mail@gaein.cn)
-        // public List<string> Tags { get; set; }
+        public override string Title
+        {
+            get => _title;
+            set => _title = value.HtmlSantinizerStandard();
+        }
     }
 }

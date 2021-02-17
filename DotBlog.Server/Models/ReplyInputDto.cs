@@ -1,50 +1,51 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Masuit.Tools.Html;
 
 namespace DotBlog.Server.Models
 {
-    public class ReplyInputDto
+    public class ReplyInputDto : ReplyUniversalDto
     {
-        /// <summary>
-        /// 用户平台
-        /// </summary>
-        public string UserPlatform { get; set; }
-        /// <summary>
-        /// 用户浏览器
-        /// </summary>
-        public string UserExplore { get; set; }
+        private string _author;
+        private string _avatarUrl;
+        private string _content;
+        private string _link;
+        private string _userExplore;
+        private string _userPlatform;
 
-        /// <summary>
-        /// 头像网址
-        /// </summary>
-        [Url]
-        public string AvatarUrl { get; set; }
+        // 重写父类的字段
+        public override string Author
+        {
+            get => _author;
+            set => _author = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 回复给某条评论ID
-        /// </summary>
-        public uint ReplyTo { get; set; }
+        public override string AvatarUrl
+        {
+            get => _avatarUrl;
+            set => _avatarUrl = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 评论者
-        /// </summary>
-        public string Author { get; set; } = "Anonymous";
+        public override string Content
+        {
+            get => _content;
+            set => _content = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 评论内容
-        /// </summary>
-        [Required]
-        public string Content { get; set; }
+        public override string Link
+        {
+            get => _link;
+            set => _link = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 链接
-        /// </summary>
-        [Url]
-        public string Link { get; set; }
+        public override string UserExplore
+        {
+            get => _userExplore;
+            set => _userExplore = value.HtmlSantinizerStandard();
+        }
 
-        /// <summary>
-        /// 邮箱
-        /// </summary>
-        [EmailAddress]
-        public string Mail { get; set; }
+        public override string UserPlatform
+        {
+            get => _userPlatform;
+            set => _userPlatform = value.HtmlSantinizerStandard();
+        }
     }
 }

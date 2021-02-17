@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using AutoMapper;
-using Masuit.Tools.Html;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
 using DotBlog.Server.Models;
@@ -49,9 +49,12 @@ namespace DotBlog.Server.Controllers
         public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger, IMapper mapper)
         {
             // 依赖注入
-            ArticleService = articleService;
-            Logger = logger;
-            Mapper = mapper;
+            ArticleService = articleService
+                             ?? throw new ArgumentNullException(nameof(articleService));
+            Logger = logger
+                     ?? throw new ArgumentNullException(nameof(logger));
+            Mapper = mapper
+                     ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -60,9 +63,9 @@ namespace DotBlog.Server.Controllers
         /// <param name="limit">限制数</param>
         /// <returns>HTTP 200</returns>
         [HttpGet]
-        public async Task<ActionResult<ICollection<ArticleListDto>>> GetArticles([FromQuery] int? limit)
+        public async Task<ActionResult<ICollection<ArticleListDto>>> GetArticleList([FromQuery] int? limit)
         {
-            Logger.LogInformation($"Match method {nameof(GetArticles)}.");
+            Logger.LogInformation($"Match method {nameof(GetArticleList)}.");
             // 获取文章列表
             var articlesList = await ArticleService.GetArticlesAsync(limit);
 
@@ -118,16 +121,9 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 200 / HTTP 404 / HTTP 400 / HTTP 500?</returns>
         //[Authorize]
         [HttpPut("{articleId}")]
-        public async Task<ActionResult<ArticleDto>> PutArticleAsync([FromRoute] uint articleId, [FromBody] ArticleInputDto inputArticle)
+        public async Task<ActionResult<ArticleDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
         {
-            Logger.LogInformation($"Match method {nameof(PutArticleAsync)}.");
-
-            // 安全检查
-            inputArticle.Category.HtmlSantinizerStandard();
-            inputArticle.Author.HtmlSantinizerStandard();
-            inputArticle.Title.HtmlSantinizerStandard();
-            inputArticle.Content.HtmlSantinizerStandard();
-            inputArticle.Description.HtmlSantinizerStandard();
+            Logger.LogInformation($"Match method {nameof(UpdateArticle)}.");
 
             // Dto映射为实体
             var article = Mapper.Map<Article>(inputArticle);
@@ -161,10 +157,10 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
-        [HttpPatch("{articleId}/Like")]
-        public async Task<IActionResult> PatchArticleLikeAsync([FromRoute] uint articleId)
+        [HttpPut("{articleId}/Like")]
+        public async Task<IActionResult> UpdateArticleLike([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(PatchArticleLikeAsync)}.");
+            Logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);
@@ -196,10 +192,10 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
-        [HttpPatch("{articleId}/Read")]
-        public async Task<IActionResult> PatchArticleReadAsync([FromRoute] uint articleId)
+        [HttpPut("{articleId}/Read")]
+        public async Task<IActionResult> UpdateArticleRead([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(PatchArticleReadAsync)}.");
+            Logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);
@@ -233,16 +229,9 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         //[Authorize]
         [HttpPost]
-        public async Task<ActionResult<ArticleDto>> PostArticleAsync([FromBody] ArticleInputDto inputArticle)
+        public async Task<ActionResult<ArticleDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
         {
-            Logger.LogInformation($"Match method {nameof(PostArticleAsync)}.");
-
-            // 安全检查
-            inputArticle.Category.HtmlSantinizerStandard();
-            inputArticle.Author.HtmlSantinizerStandard();
-            inputArticle.Title.HtmlSantinizerStandard();
-            inputArticle.Content.HtmlSantinizerStandard();
-            inputArticle.Description.HtmlSantinizerStandard();
+            Logger.LogInformation($"Match method {nameof(CreateArticle)}.");
 
             // Dto映射为实体
             var article = Mapper.Map<Article>(inputArticle);
@@ -273,9 +262,9 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 204 / HTTP 404 / HTTP 400 /HTTP 500?</returns>
         //[Authorize]
         [HttpDelete("{articleId}")]
-        public async Task<IActionResult> DeleteArticleAsync([FromRoute] uint articleId)
+        public async Task<IActionResult> DeleteArticle([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(DeleteArticleAsync)}.");
+            Logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);

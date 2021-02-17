@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using AutoMapper;
-using Masuit.Tools.Html;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 using DotBlog.Server.Services;
@@ -91,9 +90,9 @@ namespace DotBlog.Server.Controllers
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
         [HttpPatch("{replyId}/Like")]
-        public async Task<IActionResult> PatchReplyLikeAsync([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public async Task<IActionResult> UpdateReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(PatchReplyLikeAsync)}.");
+            Logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);
@@ -137,9 +136,9 @@ namespace DotBlog.Server.Controllers
         /// <param name="inputReply">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public async Task<ActionResult<ReplyDto>> PostReplyAsync([FromRoute] uint articleId, [FromBody] ReplyInputDto inputReply)
+        public async Task<ActionResult<ReplyDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyInputDto inputReply)
         {
-            Logger.LogInformation($"Match method {nameof(PostReplyAsync)}.");
+            Logger.LogInformation($"Match method {nameof(CreateReply)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);
@@ -150,15 +149,6 @@ namespace DotBlog.Server.Controllers
                 Logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
-
-            // 安全检查
-            inputReply.Content?.HtmlSantinizerStandard();
-            inputReply.Author?.HtmlSantinizerStandard();
-            inputReply.AvatarUrl?.HtmlSantinizerStandard();
-            inputReply.Link?.HtmlSantinizerStandard();
-            inputReply.Mail?.HtmlSantinizerStandard();
-            inputReply.UserExplore?.HtmlSantinizerStandard();
-            inputReply.UserExplore?.HtmlSantinizerStandard();
 
             Logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, PrintOptions));
 
@@ -192,9 +182,9 @@ namespace DotBlog.Server.Controllers
         /// <returns></returns>
         //[Authorize]
         [HttpDelete("{replyId}")]
-        public async Task<IActionResult> DeleteReplyAsync([FromRoute] uint articleId, [FromRoute] uint replyId)
+        public async Task<IActionResult> DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(DeleteReplyAsync)}.");
+            Logger.LogInformation($"Match method {nameof(DeleteReply)}.");
 
             // 获取文章
             var article = await ArticleService.GetArticleAsync(articleId);
