@@ -1,6 +1,6 @@
 ﻿namespace DotBlog.Server.Models
 {
-    public class ReplyDto : ReplyOutputDto
+    public class ReplyDto : ReplyOutputBase
     {
     }
 }

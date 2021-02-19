@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public abstract class ArticleInputDto : ArticleUniversalDto
+    public abstract class ArticleInputBase : ArticleBase
     {
         /// <summary>
         /// 是否展示在首页上

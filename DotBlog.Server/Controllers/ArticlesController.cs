@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 using AutoMapper;
 using DotBlog.Server.Entities;
@@ -32,10 +33,6 @@ namespace DotBlog.Server.Controllers
         /// 对象映射服务
         /// </summary>
         private IMapper Mapper { get; }
-
-        // 自定义返回类型
-        private StatusCodeResult ResetContent() => StatusCode(205);
-        private StatusCodeResult InternalServerError() => StatusCode(500);
 
         // 自定义字段
 
@@ -118,8 +115,8 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <param name="inputArticle">文章实例</param>
-        /// <returns>HTTP 200 / HTTP 404 / HTTP 400 / HTTP 500?</returns>
-        //[Authorize]
+        /// <returns>HTTP 200 / HTTP 404 / HTTP 400</returns>
+        [Authorize]
         [HttpPut("{articleId}")]
         public async Task<ActionResult<ArticleDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
         {
@@ -138,7 +135,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新文章
-            var result = ArticleService.PutArticle(articleOld, article);
+            Mapper.Map(inputArticle, articleOld);
 
             // 保存更改
             if (!await ArticleService.SaveChangesAsync())
@@ -148,7 +145,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ArticleDto>(result)
+                Mapper.Map<ArticleDto>(articleOld)
             );
         }
 
@@ -156,7 +153,7 @@ namespace DotBlog.Server.Controllers
         /// 更新文章点赞
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
+        /// <returns>HTTP 204 / HTTP 404</returns>
         [HttpPut("{articleId}/Like")]
         public async Task<IActionResult> UpdateArticleLike([FromRoute] uint articleId)
         {
@@ -180,18 +177,17 @@ namespace DotBlog.Server.Controllers
             if (!await ArticleService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
             // 返回结果
-            return ResetContent();
+            return NoContent();
         }
 
         /// <summary>
         /// 更新文章阅读
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <returns>HTTP 205 / HTTP 404 / HTTP 500?</returns>
+        /// <returns>HTTP 204 / HTTP 404</returns>
         [HttpPut("{articleId}/Read")]
         public async Task<IActionResult> UpdateArticleRead([FromRoute] uint articleId)
         {
@@ -215,11 +211,10 @@ namespace DotBlog.Server.Controllers
             if (!await ArticleService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
             // 返回结果
-            return ResetContent();
+            return NoContent();
         }
 
         /// <summary>
@@ -227,7 +222,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="inputArticle">文章实例</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
-        //[Authorize]
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<ArticleDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
         {
@@ -247,7 +242,6 @@ namespace DotBlog.Server.Controllers
             if (!await ArticleService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
             // 返回Dto结果
@@ -259,8 +253,8 @@ namespace DotBlog.Server.Controllers
         /// 删除文章
         /// </summary>
         /// <param name="articleId">文章ID</param>
-        /// <returns>HTTP 204 / HTTP 404 / HTTP 400 /HTTP 500?</returns>
-        //[Authorize]
+        /// <returns>HTTP 204 / HTTP 404 / HTTP 400</returns>
+        [Authorize]
         [HttpDelete("{articleId}")]
         public async Task<IActionResult> DeleteArticle([FromRoute] uint articleId)
         {
@@ -286,7 +280,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 返回结果
-            return ResetContent();
+            return NoContent();
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 using DotBlog.Server.Data;
 using DotBlog.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace DotBlog.Server
 {
@@ -54,17 +56,24 @@ namespace DotBlog.Server
         {
             if (env.IsDevelopment())
             {
+                // 开发环境
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
 
-                app.UseSwaggerUI(c => c.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}"));
+                app.UseSwaggerUI(opt => 
+                    opt.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}")
+                );
             }
 
+            // HTTPS 重定向
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            //// 身份验证
+            //app.UseAuthentication();
+            //// 授权
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

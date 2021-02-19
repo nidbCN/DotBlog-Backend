@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public abstract class ArticleOutputDto : ArticleUniversalDto
+    public abstract class ArticleOutputBase : ArticleBase
     {
         /// <summary>
         /// 文章ID

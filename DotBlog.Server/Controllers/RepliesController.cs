@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 using AutoMapper;
 using DotBlog.Server.Entities;
@@ -36,10 +37,6 @@ namespace DotBlog.Server.Controllers
         /// 对象映射服务
         /// </summary>
         private IMapper Mapper { get; }
-
-        // 自定义返回类型
-        private StatusCodeResult ResetContent() => StatusCode(205);
-        private StatusCodeResult InternalServerError() => StatusCode(500);
 
         // 自定义字段
         private JsonSerializerOptions PrintOptions { get; }
@@ -89,7 +86,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
-        [HttpPatch("{replyId}/Like")]
+        [HttpPut("{replyId}/Like")]
         public async Task<IActionResult> UpdateReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
@@ -122,11 +119,10 @@ namespace DotBlog.Server.Controllers
             if (!await ReplyService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
             // 返回结果
-            return ResetContent();
+            return NoContent();
         }
 
         /// <summary>
@@ -136,7 +132,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="inputReply">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public async Task<ActionResult<ReplyDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyInputDto inputReply)
+        public async Task<ActionResult<ReplyDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyAddDto inputReply)
         {
             Logger.LogInformation($"Match method {nameof(CreateReply)}.");
 
@@ -166,7 +162,6 @@ namespace DotBlog.Server.Controllers
             if (!await ReplyService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
             // 返回结果
@@ -179,8 +174,8 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <param name="replyId">评论ID</param>
-        /// <returns></returns>
-        //[Authorize]
+        /// <returns>HTTP 204 / HTTP 404</returns>
+        [Authorize]
         [HttpDelete("{replyId}")]
         public async Task<IActionResult> DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
@@ -212,10 +207,9 @@ namespace DotBlog.Server.Controllers
             if (!await ReplyService.SaveChangesAsync())
             {
                 Logger.LogError("Cannot save changes, UnKnow error.");
-                return InternalServerError();
             }
 
-            return ResetContent();
+            return NoContent();
 
         }
 

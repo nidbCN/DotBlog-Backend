@@ -27,12 +27,12 @@ namespace DotBlog.Server.Data
             var articleConf = modelBuilder.Entity<Article>();
             var replyConf = modelBuilder.Entity<Reply>();
 
-            // 设置对应关系
+            // 设置关系
             replyConf
                 .HasOne(it => it.Article)
                 .WithMany(it => it.Replies)
                 .HasForeignKey(it => it.ArticleId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // 设置键和索引
             replyConf.HasKey(it => it.ReplyId);

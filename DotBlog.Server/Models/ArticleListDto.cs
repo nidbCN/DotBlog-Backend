@@ -1,6 +1,6 @@
 ﻿namespace DotBlog.Server.Models
 {
-    public class ArticleListDto : ArticleOutputDto
+    public class ArticleListDto : ArticleOutputBase
     {
         /// <summary>
         /// 是否展示在首页上

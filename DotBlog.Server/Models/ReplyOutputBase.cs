@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public abstract class ReplyOutputDto : ReplyUniversalDto
+    public abstract class ReplyOutputBase : ReplyBase
     {
         /// <summary>
         /// 回复ID

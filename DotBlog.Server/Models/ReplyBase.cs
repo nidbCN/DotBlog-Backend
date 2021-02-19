@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public abstract class ReplyUniversalDto
+    public abstract class ReplyBase
     {
         /// <summary>
         /// 用户平台

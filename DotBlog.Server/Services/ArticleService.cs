@@ -84,18 +84,11 @@ namespace DotBlog.Server.Services
             // 判空
             articleOld = articleOld 
                          ?? throw new ArgumentNullException(nameof(articleOld));
-            article = article 
+            _ = article 
                       ?? throw new ArgumentNullException(nameof(article));
 
             // 更新文章内容
-            // TODO(mail@gaein.cn): 用更好的方法来实现这一段代码
-            articleOld.Alias = article.Alias;
-            articleOld.Author = article.Author;
-            articleOld.Category = article.Category;
-            articleOld.Content = article.Content;
-            articleOld.Like = article.Like;
-            articleOld.Description = article.Description;
-            articleOld.IsShown = article.IsShown;
+            // EF 自动追踪，不需要
 
             // 返回结果
             return articleOld;

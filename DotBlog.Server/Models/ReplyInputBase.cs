@@ -2,7 +2,7 @@
 
 namespace DotBlog.Server.Models
 {
-    public class ReplyInputDto : ReplyUniversalDto
+    public class ReplyInputBase : ReplyBase
     {
         private string _author;
         private string _avatarUrl;
