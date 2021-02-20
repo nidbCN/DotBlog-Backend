@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using DotBlog.Server.Entities;
-using DotBlog.Server.Models;
+using DotBlog.Shared.Dto;
+using DotBlog.Server.Dto;
 
 namespace DotBlog.Server.Profiles
 {
@@ -9,7 +10,7 @@ namespace DotBlog.Server.Profiles
         public ArticleProfile()
         {
             // 从文章实体到输出Dto的映射
-            CreateMap<Article, ArticleDto>();
+            CreateMap<Article, ArticleContentDto>();
             CreateMap<Article, ArticleListDto>();
 
             // 从输入Dto到文章实体的映射

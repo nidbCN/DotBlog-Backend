@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
 
 using AutoMapper;
 using DotBlog.Server.Entities;
-using DotBlog.Server.Models;
 using DotBlog.Server.Services;
+using DotBlog.Shared.Dto;
+using DotBlog.Server.Dto;
 
 namespace DotBlog.Server.Controllers
 {
@@ -57,7 +58,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200</returns>
         [HttpGet(Name = nameof(GetReplies))]
-        public async Task<ActionResult<ICollection<ReplyDto>>> GetReplies([FromRoute] uint articleId)
+        public async Task<ActionResult<ICollection<ReplyContentDto>>> GetReplies([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetReplies)}.");
 
@@ -76,7 +77,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回评论Dto结果
             return Ok(
-                Mapper.Map<ICollection<ReplyDto>>(replies)
+                Mapper.Map<ICollection<ReplyContentDto>>(replies)
             );
         }
 
@@ -132,7 +133,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="inputReply">回复</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [HttpPost]
-        public async Task<ActionResult<ReplyDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyAddDto inputReply)
+        public async Task<ActionResult<ReplyContentDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyAddDto inputReply)
         {
             Logger.LogInformation($"Match method {nameof(CreateReply)}.");
 
@@ -165,7 +166,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 返回结果
-            var returnDto = Mapper.Map<ReplyDto>(result);
+            var returnDto = Mapper.Map<ReplyContentDto>(result);
             return CreatedAtRoute(nameof(GetReplies), new { replyId = returnDto.ReplyId }, returnDto);
         }
 

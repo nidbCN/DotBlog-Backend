@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
 
 using AutoMapper;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
-using DotBlog.Server.Models;
+using DotBlog.Server.Dto;
+using DotBlog.Shared.Dto;
 
 namespace DotBlog.Server.Controllers
 {
@@ -87,7 +88,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 200/ HTTP 404 / HTTP 400</returns>
         [HttpGet("{articleId}", Name = nameof(GetArticle))]
-        public async Task<ActionResult<ArticleDto>> GetArticle([FromRoute] uint articleId)
+        public async Task<ActionResult<ArticleContentDto>> GetArticle([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(GetArticle)}.");
 
@@ -105,7 +106,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ArticleDto>(article)
+                Mapper.Map<ArticleContentDto>(article)
             );
         }
 
@@ -118,12 +119,9 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 200 / HTTP 404 / HTTP 400</returns>
         [Authorize]
         [HttpPut("{articleId}")]
-        public async Task<ActionResult<ArticleDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
+        public async Task<ActionResult<ArticleContentDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
         {
             Logger.LogInformation($"Match method {nameof(UpdateArticle)}.");
-
-            // Dto映射为实体
-            var article = Mapper.Map<Article>(inputArticle);
 
             // 获取旧文章
             var articleOld = await ArticleService.GetArticleAsync(articleId);
@@ -145,7 +143,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ArticleDto>(articleOld)
+                Mapper.Map<ArticleContentDto>(articleOld)
             );
         }
 
@@ -224,7 +222,7 @@ namespace DotBlog.Server.Controllers
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<ArticleDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
+        public async Task<ActionResult<ArticleContentDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
         {
             Logger.LogInformation($"Match method {nameof(CreateArticle)}.");
 
@@ -245,7 +243,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 返回Dto结果
-            var returnArticleDto = Mapper.Map<ArticleDto>(returnArticle);
+            var returnArticleDto = Mapper.Map<ArticleContentDto>(returnArticle);
             return CreatedAtRoute(nameof(GetArticle), new { articleId = returnArticleDto.ArticleId }, returnArticleDto);
         }
 
