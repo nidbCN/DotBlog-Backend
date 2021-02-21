@@ -1,11 +1,11 @@
-﻿using System;
+﻿using DotBlog.Server.Data;
+using DotBlog.Server.Entities;
+using Masuit.Tools;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Masuit.Tools;
-using DotBlog.Server.Data;
-using DotBlog.Server.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace DotBlog.Server.Services
 {
@@ -34,7 +34,7 @@ namespace DotBlog.Server.Services
         //}
 
         // TODO(mail@gaein.cn): 科学的获取回复
-        public async Task<ICollection<Reply>> GetReplies(Article article)
+        public async Task<ICollection<Reply>> GetRepliesAsync(Article article)
         {
             // 判空
             article = article
@@ -65,7 +65,7 @@ namespace DotBlog.Server.Services
             // 新建回复
             reply.ArticleId = article.ArticleId;
 
-            if (!reply.Link.MatchUrl() || !reply.Mail.MatchEmail().isMatch)
+            if (!reply.Mail.MatchEmail().isMatch)
             {
                 return null;
             }

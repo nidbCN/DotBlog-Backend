@@ -6,7 +6,6 @@ namespace DotBlog.Server.Dto
     public class ReplyInputBase : ReplyBase
     {
         private string _author;
-        private string _avatarUrl;
         private string _content;
         private string _link;
         private string _userExplore;
@@ -19,11 +18,7 @@ namespace DotBlog.Server.Dto
             set => _author = value.HtmlSantinizerStandard();
         }
 
-        public override string AvatarUrl
-        {
-            get => _avatarUrl;
-            set => _avatarUrl = value.HtmlSantinizerStandard();
-        }
+        public override string AvatarUrl { get; set; }
 
         public override string Content
         {

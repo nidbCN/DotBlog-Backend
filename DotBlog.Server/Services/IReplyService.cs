@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DotBlog.Server.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Services
 {
@@ -13,7 +13,7 @@ namespace DotBlog.Server.Services
         /// </summary>
         /// <param name="article">文章实体</param>
         /// <returns>回复实体列表</returns>
-        Task<ICollection<Reply>> GetReplies(Article article);
+        Task<ICollection<Reply>> GetRepliesAsync(Article article);
 
 
         /// <summary>

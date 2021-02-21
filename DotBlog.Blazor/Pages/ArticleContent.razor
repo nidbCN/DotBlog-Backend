@@ -1,6 +1,41 @@
 ﻿@page "/articles/{*ArticleId}/"
+@using DotBlog.Shared.Dto
 
-<h1>A TEST !</h1>
-<p>
-    AID IS |@ArticleId|
-</p>
+@if (@ArticleContentGet == null)
+{
+<Card Hoverable="true" Loading="true"></Card> }
+else
+{
+<Card Hoverable="true">
+    <TitleTemplate>
+        <Icon Type="credit-card" Theme="outline" /> @ArticleContentGet.Title
+    </TitleTemplate>
+    <Extra>
+        <p>@ArticleContentGet.Author</p>
+    </Extra>
+    <Body>
+        <p>@ArticleContentGet.Content</p>
+    </Body>
+    <ActionTemplate>
+        @if (!string.IsNullOrWhiteSpace(ArticleContentGet.Category))
+        {
+<span Style="margin: 6px">
+    <Tag Color="orange-inverse">@ArticleContentGet.Category</Tag>
+</span>}
+        <span>
+            <span Style="margin: 6px"><Icon Type="clock-circle" Theme="outline" /></span>
+            |
+            <span Style="margin: 6px">@ArticleContentGet.PostTime @ArticleContentGet.Read <Icon Type="read" Theme="outline" /></span>
+            |
+            <span Style="margin: 6px">@ArticleContentGet.Like <Icon Type="like" Theme="outline" /></span>
+        </span>
+    </ActionTemplate>
+</Card>
+
+                @foreach (var item in ReplyListGet)
+                {
+                    <Comment Author="@item.Author" Avatar="@item.AvatarUrl" Content="@item.Content" Datetime="@item.ReplyTime.ToString("yyyy-MM-dd HH")">
+                    </Comment>
+                }
+
+}

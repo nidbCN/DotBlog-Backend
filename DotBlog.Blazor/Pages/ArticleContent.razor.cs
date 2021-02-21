@@ -21,7 +21,7 @@ namespace DotBlog.Blazor.Pages
         [Inject] public IArticleService ArticleService { get; set; }
 
         public ArticleContentDto ArticleContentGet { get; set; }
-        public IEnumerable<ReplyContentDto> ReplyListGet { get; set; }
+        public IEnumerable<ReplyContentDto> ReplyListGet { get; set; } = new List<ReplyContentDto>();
 
         protected override async Task OnInitializedAsync()
         {

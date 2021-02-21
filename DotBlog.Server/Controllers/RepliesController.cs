@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using DotBlog.Server.Dto;
+using DotBlog.Server.Entities;
+using DotBlog.Server.Services;
+using DotBlog.Shared.Dto;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-
-using AutoMapper;
-using DotBlog.Server.Entities;
-using DotBlog.Server.Services;
-using DotBlog.Shared.Dto;
-using DotBlog.Server.Dto;
 
 namespace DotBlog.Server.Controllers
 {
@@ -73,7 +72,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 获取回复
-            var replies = ReplyService.GetReplies(article);
+            var replies = await ReplyService.GetRepliesAsync(article);
 
             // 返回评论Dto结果
             return Ok(
@@ -167,7 +166,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回结果
             var returnDto = Mapper.Map<ReplyContentDto>(result);
-            return CreatedAtRoute(nameof(GetReplies), new { replyId = returnDto.ReplyId }, returnDto);
+            return Created($"{Startup.ApiVersion}/articles/{articleId}/replies/{returnDto.ReplyId}",returnDto);
         }
 
         /// <summary>

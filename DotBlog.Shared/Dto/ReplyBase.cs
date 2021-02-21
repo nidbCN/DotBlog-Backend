@@ -17,7 +17,6 @@ namespace DotBlog.Shared.Dto
         /// <summary>
         /// 头像网址
         /// </summary>
-        [Url]
         public abstract string AvatarUrl { get; set; }
 
         /// <summary>
