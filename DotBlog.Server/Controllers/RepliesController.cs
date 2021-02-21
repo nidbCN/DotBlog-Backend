@@ -86,7 +86,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <param name="replyId">回复ID</param>
         /// <returns>HTTP 200 / HTTP 204 / HTTP 400</returns>
-        [HttpPut("{replyId}/Like")]
+        [HttpPost("{replyId}/Like")]
         public async Task<IActionResult> UpdateReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");

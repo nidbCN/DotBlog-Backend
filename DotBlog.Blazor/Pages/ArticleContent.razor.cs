@@ -23,10 +23,17 @@ namespace DotBlog.Blazor.Pages
         public ArticleContentDto ArticleContentGet { get; set; }
         public IEnumerable<ReplyContentDto> ReplyListGet { get; set; } = new List<ReplyContentDto>();
 
+        public async void LikeThisArticleAsync()
+        {
+            await ArticleService.UpdateArticleLikeAsync(uint.Parse(ArticleId));
+            ArticleContentGet.Like++;
+        }
+
         protected override async Task OnInitializedAsync()
         {
             ArticleContentGet = await ArticleService.GetArticleAsync(uint.Parse(ArticleId));
             ReplyListGet = await ReplyService.GetReplyListAsync(uint.Parse(ArticleId));
+            await ArticleService.UpdateArticleReadAsync(uint.Parse(ArticleId));
             await base.OnInitializedAsync();
         }
     }

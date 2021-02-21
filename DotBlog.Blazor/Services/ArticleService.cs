@@ -36,5 +36,17 @@ namespace DotBlog.Blazor.Services
             await JsonSerializer.DeserializeAsync<ArticleContentDto>(
                 await HttpClient.GetStreamAsync(BaseRoute + articleId), _jsonOptionPropertyNameCaseInsensitive
             );
+
+        public async Task UpdateArticleLikeAsync(uint articleId)
+        {
+            HttpContent content = new StringContent("");
+            await HttpClient.PostAsync(BaseRoute + articleId +"/Like", content);
+        }
+
+        public async Task UpdateArticleReadAsync(uint articleId)
+        {
+            HttpContent content = new StringContent("");
+            await HttpClient.PostAsync(BaseRoute + articleId + "/Read", content);
+        }
     }
 }

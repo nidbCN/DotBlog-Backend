@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Collections.Generic;
-
-using AutoMapper;
+﻿using AutoMapper;
+using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
-using DotBlog.Server.Dto;
 using DotBlog.Shared.Dto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DotBlog.Server.Controllers
 {
@@ -152,7 +151,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTTP 404</returns>
-        [HttpPut("{articleId}/Like")]
+        [HttpPost("{articleId}/Like")]
         public async Task<IActionResult> UpdateArticleLike([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
@@ -186,7 +185,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTTP 404</returns>
-        [HttpPut("{articleId}/Read")]
+        [HttpPost("{articleId}/Read")]
         public async Task<IActionResult> UpdateArticleRead([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");

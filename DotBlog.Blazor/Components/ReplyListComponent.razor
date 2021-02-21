@@ -15,10 +15,5 @@
 
 @code{
 
-    private string CardTitle => $"{Replies.Count()}条回复：";
-
-    [Parameter] public IEnumerable<ReplyContentDto> Replies { get; set; }
-
-    private readonly RenderFragment _replyAction =@<span>回复</span>;
-
+    private readonly RenderFragment _replyAction = @<span>回复</span>;
 }

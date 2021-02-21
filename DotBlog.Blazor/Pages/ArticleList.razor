@@ -36,13 +36,14 @@ else
                     }
                     <span>
                         <span Style="margin: 6px"><Icon Type="clock-circle" Theme="outline"/></span>
+                        <span Style="margin: 6px">@item.PostTime </span>
                         |
-                        <span Style="margin: 6px">@item.PostTime @item.Read <Icon Type="read" Theme="outline"/></span>
+                        <span style="margin: 6px">@item.Read <Icon Type="read" Theme="outline"/></span>
                         |
                         <span Style="margin: 6px">@item.Like <Icon Type="like" Theme="outline"/></span>
                     </span>
                 </ActionTemplate>
             </Card>
+        }
     }
-}
 }
