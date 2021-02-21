@@ -30,8 +30,6 @@ namespace DotBlog.Shared.Dto
 
         public override string Category { get; set; }
 
-        public override string Content { get; set; }
-
         public override string Description { get; set; }
 
         public override string Title { get; set; }

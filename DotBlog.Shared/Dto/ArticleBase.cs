@@ -30,19 +30,12 @@ namespace DotBlog.Shared.Dto
         /// </summary>
         public abstract string Category { get; set; }
 
-        
+
         /// <summary>
         /// 作者
         /// </summary>
         public abstract string Author { get; set; }
 
-        /// <summary>
-        /// 文章内容
-        /// </summary>
-        [Display(Name = "文章内容")]
-        [Required(ErrorMessage = "{0}这个字段是必填的")]
-        public abstract string Content { get; set; }
-         
         // /// <summary>
         // /// List[string]: 标签
         // /// </summary>

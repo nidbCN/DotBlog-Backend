@@ -1,7 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 using DotBlog.Server.Data;
 using DotBlog.Server.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace DotBlog.Server
 {
@@ -49,6 +47,13 @@ namespace DotBlog.Server
             {
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo { Title = "DotBlog Server  - Powered by .NET 5.0", Version = ApiVersion });
             });
+
+            services.AddCors(options =>
+                options.AddPolicy("Open", builder => 
+                    builder.AllowAnyHeader()
+                        .AllowAnyOrigin()
+                    )
+                );
         }
 
         // HTTP 管道中间件配置
@@ -70,6 +75,8 @@ namespace DotBlog.Server
 
             app.UseRouting();
 
+            // 跨域
+            app.UseCors("Open");
             //// 身份验证
             //app.UseAuthentication();
             //// 授权

@@ -1,0 +1,48 @@
+﻿@page "/"
+
+@if (ArticleListGet == null)
+{
+    <Card Loading="true"></Card>
+}
+else
+{
+    foreach (var item in ArticleListGet)
+    {
+
+        if (item.IsShown)
+        {
+            <Card Hoverable="true" Style="width: 80%">
+                <TitleTemplate>
+                    <Icon Type="credit-card" Theme="outline"/> @item.Title
+                </TitleTemplate>
+                <Extra>
+                    <p>@item.Author</p>
+                </Extra>
+                <Body>
+                <p>@item.Description</p>
+                </Body>
+                <ActionTemplate>
+                    <Button Style="margin: 6px"
+                            @onclick="@(e => NavToArticle(item.ArticleId, item.Alias))"
+                            Type="primary"
+                            Icon="right-circle">
+                        阅读全文
+                    </Button>
+                    @if (!string.IsNullOrWhiteSpace(item.Category))
+                    {
+                        <span Style="margin: 6px">
+                            <Tag Color="orange-inverse">@item.Category</Tag>
+                        </span>
+                    }
+                    <span>
+                        <span Style="margin: 6px"><Icon Type="clock-circle" Theme="outline"/></span>
+                        |
+                        <span Style="margin: 6px">@item.PostTime @item.Read <Icon Type="read" Theme="outline"/></span>
+                        |
+                        <span Style="margin: 6px">@item.Like <Icon Type="like" Theme="outline"/></span>
+                    </span>
+                </ActionTemplate>
+            </Card>
+    }
+}
+}

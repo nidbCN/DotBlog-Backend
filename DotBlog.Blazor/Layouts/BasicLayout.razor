@@ -1,9 +1,9 @@
-﻿@namespace DotBlog.Blazor
+﻿@namespace DotBlog.Blazor.Layouts
 @inherits LayoutComponentBase
 
-<AntDesign.Pro.Layout.BasicLayout 
+<AntDesign.Pro.Layout.BasicLayout
     Logo="@("https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg")"
-    MenuData="_menuData">
+    MenuData="MenuData.ToArray()">
     <RightContentRender>
         <RightContent />
     </RightContentRender>
@@ -12,17 +12,3 @@
     </ChildContent>
 </AntDesign.Pro.Layout.BasicLayout>
 <SettingDrawer />
-
-@code
-{
-    private readonly MenuDataItem[] _menuData = 
-    {
-        new MenuDataItem
-        {
-            Path = "/",
-            Name = "welcome",
-            Key = "welcome",
-            Icon = "smile",
-        }
-    };
-}

@@ -14,7 +14,7 @@ namespace DotBlog.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.2");
+                .HasAnnotation("ProductVersion", "5.0.3");
 
             modelBuilder.Entity("DotBlog.Server.Entities.Article", b =>
                 {
@@ -49,9 +49,6 @@ namespace DotBlog.Server.Migrations
                     b.Property<uint>("Read")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ResourceUri")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Title")
                         .HasColumnType("TEXT");
 
@@ -60,6 +57,21 @@ namespace DotBlog.Server.Migrations
                     b.HasIndex("ArticleId");
 
                     b.ToTable("Articles");
+
+                    b.HasData(
+                        new
+                        {
+                            ArticleId = 1u,
+                            Alias = "Hello-World",
+                            Author = "DotBlog",
+                            Content = "欢迎使用，这是DotBlog自动生成的第一篇文章",
+                            Description = "自动生成的第一篇文章",
+                            IsShown = true,
+                            Like = 0u,
+                            PostTime = new DateTime(2021, 2, 21, 13, 55, 50, 51, DateTimeKind.Local).AddTicks(9192),
+                            Read = 0u,
+                            Title = "HelloWorld"
+                        });
                 });
 
             modelBuilder.Entity("DotBlog.Server.Entities.Reply", b =>
@@ -95,9 +107,6 @@ namespace DotBlog.Server.Migrations
                     b.Property<uint>("ReplyTo")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ResourceUri")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("UserExplore")
                         .HasColumnType("TEXT");
 
@@ -118,7 +127,7 @@ namespace DotBlog.Server.Migrations
                     b.HasOne("DotBlog.Server.Entities.Article", "Article")
                         .WithMany("Replies")
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Article");

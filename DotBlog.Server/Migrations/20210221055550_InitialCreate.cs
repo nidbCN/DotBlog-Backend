@@ -22,8 +22,7 @@ namespace DotBlog.Server.Migrations
                     Category = table.Column<string>(type: "TEXT", nullable: true),
                     PostTime = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Author = table.Column<string>(type: "TEXT", nullable: true),
-                    Content = table.Column<string>(type: "TEXT", nullable: true),
-                    ResourceUri = table.Column<string>(type: "TEXT", nullable: true)
+                    Content = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -46,8 +45,7 @@ namespace DotBlog.Server.Migrations
                     Content = table.Column<string>(type: "TEXT", nullable: true),
                     Link = table.Column<string>(type: "TEXT", nullable: true),
                     Mail = table.Column<string>(type: "TEXT", nullable: true),
-                    ReplyTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    ResourceUri = table.Column<string>(type: "TEXT", nullable: true)
+                    ReplyTime = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,8 +55,13 @@ namespace DotBlog.Server.Migrations
                         column: x => x.ArticleId,
                         principalTable: "Articles",
                         principalColumn: "ArticleId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "Articles",
+                columns: new[] { "ArticleId", "Alias", "Author", "Category", "Content", "Description", "IsShown", "Like", "PostTime", "Read", "Title" },
+                values: new object[] { 1u, "Hello-World", "DotBlog", null, "欢迎使用，这是DotBlog自动生成的第一篇文章", "自动生成的第一篇文章", true, 0u, new DateTime(2021, 2, 21, 13, 55, 50, 51, DateTimeKind.Local).AddTicks(9192), 0u, "HelloWorld" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_ArticleId",
