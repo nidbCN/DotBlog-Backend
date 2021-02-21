@@ -1,0 +1,24 @@
+﻿@using DotBlog.Shared.Dto
+
+<Card Title="@CardTitle" Hoverable="true">
+    <AntList DataSource="@Replies" TItem="ReplyContentDto" Class="comment-list">
+        <ListItem>
+            <Comment Actions="new List<RenderFragment>() {_replyAction}"
+                     Avatar="@context.AvatarUrl"
+                     Author="@context.Author"
+                     Datetime="@context.ReplyTime.ToString("yyyy-MM-dd HH:mm")"
+                     Content="@context.Content">
+            </Comment>
+        </ListItem>
+    </AntList>
+</Card>
+
+@code{
+
+    private string CardTitle => $"{Replies.Count()}条回复：";
+
+    [Parameter] public IEnumerable<ReplyContentDto> Replies { get; set; }
+
+    private readonly RenderFragment _replyAction =@<span>回复</span>;
+
+}

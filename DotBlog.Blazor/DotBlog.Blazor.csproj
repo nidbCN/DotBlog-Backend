@@ -20,10 +20,6 @@
     <ProjectReference Include="..\DotBlog.Shared\DotBlog.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
-
   <PropertyGroup Condition=" '$(SolutionDir)'==''">
     <SolutionDir>./</SolutionDir>
   </PropertyGroup>
@@ -46,4 +42,8 @@
     <Exec WorkingDirectory="$(SolutionDir)" Command="npm install" />
     <Exec WorkingDirectory="$(SolutionDir)" Command="npm run gulp:pro" />
   </Target>
+
+  <ItemGroup>
+    <None Include="Components\ReplyListComponent.razor" />
+  </ItemGroup>
 </Project>
