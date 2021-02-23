@@ -21,7 +21,7 @@ namespace DotBlog.Blazor.Pages
         [Inject] public IArticleService ArticleService { get; set; }
 
         public ArticleContentDto ArticleContentGet { get; set; }
-        public IEnumerable<ReplyContentDto> ReplyListGet { get; set; } = new List<ReplyContentDto>();
+        public IList<ReplyContentDto> ReplyListGet { get; set; } = new List<ReplyContentDto>();
 
         public async void LikeThisArticleAsync()
         {

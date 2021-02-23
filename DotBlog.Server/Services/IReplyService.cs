@@ -31,7 +31,7 @@ namespace DotBlog.Server.Services
         /// </summary>
         /// <param name="reply">回复实体</param>
         /// <returns>更新结果</returns>
-        void PatchReplyLike(Reply reply);
+        void UpdateReplyLike(Reply reply);
 
         // 写入相关
 

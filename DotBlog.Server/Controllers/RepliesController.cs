@@ -113,7 +113,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新回复点赞
-            ReplyService.PatchReplyLike(reply);
+            ReplyService.UpdateReplyLike(reply);
 
             // ReSharper disable once InvertIf
             if (!await ReplyService.SaveChangesAsync())

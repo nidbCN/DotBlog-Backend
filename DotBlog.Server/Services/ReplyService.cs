@@ -45,7 +45,7 @@ namespace DotBlog.Server.Services
             // return articleItem.Replies;
         }
 
-        public void PatchReplyLike(Reply reply)
+        public void UpdateReplyLike(Reply reply)
         {
             // 判空
             reply = reply

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using DotBlog.Server.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Services
 {
@@ -45,14 +44,14 @@ namespace DotBlog.Server.Services
         /// </summary>
         /// <param name="article">文章实体</param>
         /// <returns>更新结果</returns>
-        void PatchArticleLike(Article article);
+        void UpdateArticleLike(Article article);
 
         /// <summary>
         /// 更新文章已读数
         /// </summary>
         /// <param name="article">文章实体</param>
         /// <returns>更新结果</returns>
-        void PatchArticleRead(Article article);
+        void UpdateArticleRead(Article article);
 
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace DotBlog.Server.Services
         /// <param name="articleOld">旧文章实体</param>
         /// <param name="article">新文章实体</param>
         /// <returns>更新结果</returns>
-        Article PutArticle(Article articleOld, Article article);
+        Article UpdateArticle(Article articleOld, Article article);
 
         // 写入相关
 

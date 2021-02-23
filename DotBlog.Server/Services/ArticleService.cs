@@ -1,11 +1,10 @@
-﻿using System;
+﻿using DotBlog.Server.Data;
+using DotBlog.Server.Entities;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-
-using DotBlog.Server.Data;
-using DotBlog.Server.Entities;
 
 
 namespace DotBlog.Server.Services
@@ -58,7 +57,7 @@ namespace DotBlog.Server.Services
 
         // 更新相关
 
-        public void PatchArticleLike(Article article)
+        public void UpdateArticleLike(Article article)
         {
             // 判空
             article = article
@@ -68,7 +67,7 @@ namespace DotBlog.Server.Services
             article.Like++;
         }
 
-        public void PatchArticleRead(Article article)
+        public void UpdateArticleRead(Article article)
         {
             // 判空
             article = article
@@ -78,13 +77,13 @@ namespace DotBlog.Server.Services
             article.Read++;
         }
 
-        public Article PutArticle(Article articleOld, Article article)
+        public Article UpdateArticle(Article articleOld, Article article)
         {
 
             // 判空
-            articleOld = articleOld 
+            articleOld = articleOld
                          ?? throw new ArgumentNullException(nameof(articleOld));
-            _ = article 
+            _ = article
                       ?? throw new ArgumentNullException(nameof(article));
 
             // 更新文章内容

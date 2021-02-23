@@ -168,7 +168,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新点赞
-            ArticleService.PatchArticleLike(article);
+            ArticleService.UpdateArticleLike(article);
 
             // ReSharper disable once InvertIf
             if (!await ArticleService.SaveChangesAsync())
@@ -202,7 +202,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新文章阅读数
-            ArticleService.PatchArticleRead(article);
+            ArticleService.UpdateArticleRead(article);
 
             // ReSharper disable once InvertIf
             if (!await ArticleService.SaveChangesAsync())
