@@ -3,7 +3,6 @@ using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
 using DotBlog.Shared.Dto;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -175,7 +174,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <param name="replyId">评论ID</param>
         /// <returns>HTTP 204 / HTTP 404</returns>
-        [Authorize]
+        //[Authorize]
         [HttpDelete("{replyId}")]
         public async Task<IActionResult> DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {

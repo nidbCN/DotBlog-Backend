@@ -3,7 +3,6 @@ using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
 using DotBlog.Shared.Dto;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -116,7 +115,7 @@ namespace DotBlog.Server.Controllers
         /// <param name="articleId">文章ID</param>
         /// <param name="inputArticle">文章实例</param>
         /// <returns>HTTP 200 / HTTP 404 / HTTP 400</returns>
-        [Authorize]
+        //[Authorize]
         [HttpPut("{articleId}")]
         public async Task<ActionResult<ArticleContentDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
         {
@@ -219,7 +218,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="inputArticle">文章实例</param>
         /// <returns>HTTP 201 / HTTP 202 / HTTP 400</returns>
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task<ActionResult<ArticleContentDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
         {
@@ -251,7 +250,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTTP 404 / HTTP 400</returns>
-        [Authorize]
+        //[Authorize]
         [HttpDelete("{articleId}")]
         public async Task<IActionResult> DeleteArticle([FromRoute] uint articleId)
         {

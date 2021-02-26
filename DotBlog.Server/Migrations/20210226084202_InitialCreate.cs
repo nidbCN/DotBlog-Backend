@@ -61,7 +61,7 @@ namespace DotBlog.Server.Migrations
             migrationBuilder.InsertData(
                 table: "Articles",
                 columns: new[] { "ArticleId", "Alias", "Author", "Category", "Content", "Description", "IsShown", "Like", "PostTime", "Read", "Title" },
-                values: new object[] { 1u, "Hello-World", "DotBlog", null, "欢迎使用，这是DotBlog自动生成的第一篇文章", "自动生成的第一篇文章", true, 0u, new DateTime(2021, 2, 21, 13, 55, 50, 51, DateTimeKind.Local).AddTicks(9192), 0u, "HelloWorld" });
+                values: new object[] { 1u, "Hello-World", "DotBlog", null, "欢迎使用，这是DotBlog自动生成的第一篇文章", "自动生成的第一篇文章", true, 0u, new DateTime(2021, 2, 26, 16, 42, 1, 950, DateTimeKind.Local).AddTicks(3885), 0u, "HelloWorld" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Articles_ArticleId",

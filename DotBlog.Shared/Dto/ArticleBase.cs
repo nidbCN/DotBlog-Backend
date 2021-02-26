@@ -12,6 +12,11 @@ namespace DotBlog.Shared.Dto
         public string Alias { get; set; }
 
         /// <summary>
+        /// 封面Url
+        /// </summary>
+        public string CoverUrl { get; set; }
+
+        /// <summary>
         /// 文章标题
         /// </summary>
         [Display(Name = "文章标题")]

@@ -68,7 +68,7 @@ namespace DotBlog.Server.Migrations
                             Description = "自动生成的第一篇文章",
                             IsShown = true,
                             Like = 0u,
-                            PostTime = new DateTime(2021, 2, 21, 13, 55, 50, 51, DateTimeKind.Local).AddTicks(9192),
+                            PostTime = new DateTime(2021, 2, 26, 16, 42, 1, 950, DateTimeKind.Local).AddTicks(3885),
                             Read = 0u,
                             Title = "HelloWorld"
                         });

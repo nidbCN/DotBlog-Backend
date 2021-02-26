@@ -19,7 +19,7 @@ namespace DotBlog.Blazor.Services
             PropertyNameCaseInsensitive = true,
         };
 
-        private const string BaseRoute = "v1/articles/";
+        private const string BaseRoute = "articles/";
 
         public ArticleService(HttpClient httpClient)
         {

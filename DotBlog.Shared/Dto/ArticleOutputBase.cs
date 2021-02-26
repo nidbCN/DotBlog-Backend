@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DotBlog.Shared.Dto
+﻿namespace DotBlog.Shared.Dto
 {
     public abstract class ArticleOutputBase : ArticleBase
     {
@@ -22,7 +20,7 @@ namespace DotBlog.Shared.Dto
         /// <summary>
         /// 发布时间
         /// </summary>
-        public DateTime PostTime { get; set; }
+        public string PostTime { get; set; }
 
         // 重写父类的字段
 

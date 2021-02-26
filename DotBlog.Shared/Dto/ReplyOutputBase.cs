@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DotBlog.Shared.Dto
+﻿namespace DotBlog.Shared.Dto
 {
     public abstract class ReplyOutputBase : ReplyBase
     {
@@ -17,7 +15,7 @@ namespace DotBlog.Shared.Dto
         /// <summary>
         /// 评论时间(JavaScript时间戳)
         /// </summary>
-        public DateTime ReplyTime { get; set; }
+        public string ReplyTime { get; set; }
 
         // 重写父类方法
         public override string Author { get; set; }
