@@ -150,7 +150,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTTP 404</returns>
-        [HttpPost("{articleId}/Like")]
+        [HttpPut("{articleId}/Like")]
         public async Task<IActionResult> UpdateArticleLike([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
@@ -184,7 +184,7 @@ namespace DotBlog.Server.Controllers
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>HTTP 204 / HTTP 404</returns>
-        [HttpPost("{articleId}/Read")]
+        [HttpPut("{articleId}/Read")]
         public async Task<IActionResult> UpdateArticleRead([FromRoute] uint articleId)
         {
             Logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");
