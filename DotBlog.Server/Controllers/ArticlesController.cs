@@ -66,10 +66,9 @@ namespace DotBlog.Server.Controllers
             var articlesList = await ArticleService.GetArticlesAsync(limit);
 
             // 判空
-            if (articlesList == null)
+            if (articlesList.Count == 0)
             {
                 Logger.LogInformation("No articles were found, return a empty list.");
-                return Ok();
             }
 
             Logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articlesList, PrintOptions)}");
