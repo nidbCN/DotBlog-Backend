@@ -12,7 +12,7 @@ namespace DotBlog.Shared.Dto
         /// <summary>
         /// 用户浏览器
         /// </summary>
-        public abstract string UserExplore { get; set; }
+        public abstract string UserBrowser { get; set; }
 
         /// <summary>
         /// 头像网址
