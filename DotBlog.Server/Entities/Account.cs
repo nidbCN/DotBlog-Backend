@@ -1,7 +1,9 @@
 ﻿namespace DotBlog.Server.Entities
 {
-    public class Accounts
+    public class Account
     {
+        public uint UserId { get; set; }
+
         /// <summary>
         /// 用户名
         /// </summary>
