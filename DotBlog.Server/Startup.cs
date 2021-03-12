@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 using DotBlog.Server.Data;
+using DotBlog.Server.Models;
 using DotBlog.Server.Services;
 
 namespace DotBlog.Server
@@ -29,6 +30,9 @@ namespace DotBlog.Server
         // 服务注入配置
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AppConfig>(
+                Configuration.GetSection("AppConfig")
+                );
             // 添加数据库上下文
             services.AddDbContext<DotBlogDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
@@ -36,7 +40,7 @@ namespace DotBlog.Server
 
             // 添加 AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            
+
             // 添加文章、回复服务
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<IReplyService, ReplyService>();
@@ -49,7 +53,7 @@ namespace DotBlog.Server
             });
 
             services.AddCors(options =>
-                options.AddPolicy("Open", builder => 
+                options.AddPolicy("Open", builder =>
                     builder.AllowAnyHeader()
                         .AllowAnyOrigin()
                     )
@@ -65,7 +69,7 @@ namespace DotBlog.Server
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
 
-                app.UseSwaggerUI(opt => 
+                app.UseSwaggerUI(opt =>
                     opt.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}")
                 );
             }
