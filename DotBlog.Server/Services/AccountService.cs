@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DotBlog.Server.Data;
+using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 using DotBlog.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,13 @@ namespace DotBlog.Server.Services
             account.Password =
                 Helper.EncryptPassword.EncryptPasswordWithSalt(account.Password, Options.Value.PasswordSalt);
 
-            await Context.Accounts.FirstOrDefaultAsync(it=> it.UserId.ToString() == account.Identification ||  it.Name == account.Identification || it.Mail == account.Identification 
-                                                            || it.Phone == account.Identification);
+            return await Context.Accounts.AnyAsync (it =>
+                (it.UserId.ToString() == account.Identification ||
+                it.Name == account.Identification ||
+                it.Mail == account.Identification ||
+                it.Phone == account.Identification) &&
+                it.PasswordHash == account.Password
+            );
         }
     }
 }
