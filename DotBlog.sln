@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotBlog.Server", "DotBlog.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotBlog.Shared", "DotBlog.Shared\DotBlog.Shared.csproj", "{1A06D8CF-02C5-4CD2-8282-D31D2C27E7E5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotBlog.Blazor", "DotBlog.Blazor\DotBlog.Blazor.csproj", "{4175CE6E-B898-4A17-A0DD-7C5BFA725EB1}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{1A06D8CF-02C5-4CD2-8282-D31D2C27E7E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A06D8CF-02C5-4CD2-8282-D31D2C27E7E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A06D8CF-02C5-4CD2-8282-D31D2C27E7E5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4175CE6E-B898-4A17-A0DD-7C5BFA725EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4175CE6E-B898-4A17-A0DD-7C5BFA725EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4175CE6E-B898-4A17-A0DD-7C5BFA725EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4175CE6E-B898-4A17-A0DD-7C5BFA725EB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
