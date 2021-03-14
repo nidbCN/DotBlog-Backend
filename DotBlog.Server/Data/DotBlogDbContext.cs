@@ -20,11 +20,17 @@ namespace DotBlog.Server.Data
         /// </summary>
         public DbSet<Reply> Replies { get; set; }
 
+        /// <summary>
+        /// 账户表
+        /// </summary>
+        public DbSet<Account> Accounts { get; set; }
+
         // 重写父类方法设置数据库
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var articleConf = modelBuilder.Entity<Article>();
             var replyConf = modelBuilder.Entity<Reply>();
+            var accountConf = modelBuilder.Entity<Account>();
 
             // 设置关系
             replyConf
@@ -38,6 +44,10 @@ namespace DotBlog.Server.Data
             replyConf.HasIndex(it => it.ReplyId);
             articleConf.HasKey(it => it.ArticleId);
             articleConf.HasIndex(it => it.ArticleId);
+            accountConf.HasKey(it => it.UserId);
+            accountConf.HasIndex(it => it.Name);
+            accountConf.HasIndex(it => it.Name);
+            accountConf.HasIndex(it => it.Phone);
 
             articleConf.HasData(
                 new Article()

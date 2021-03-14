@@ -22,7 +22,7 @@
         public override string AvatarUrl { get; set; }
         public override string Content { get; set; }
         public override string Link { get; set; }
-        public override string UserExplore { get; set; }
+        public override string UserBrowser { get; set; }
         public override string UserPlatform { get; set; }
     }
 }
