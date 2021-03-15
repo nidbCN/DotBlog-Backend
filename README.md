@@ -28,6 +28,11 @@
 如果你敢用，那真的太好不过了。同时也欢迎 Pr 项目，或者开发自己的前端。
 API 请克隆编译项目并 debug 运行后，访问 swagger 页面。
 
+
+### 注意
+`build.sh` 将默认发布适用于 `Ubuntu 20.04 x64` 的二进制文件和 `Dockerfile` 。其余操作系统请自行更改参数。
+`build-docker.sh` 将默认发布标签为 `DotBlog-Server:v1.3` 的镜像并且开放5003端口。
+
 ## GPLv3
 
 ![GPLv3 logo](https://www.gnu.org/graphics/gplv3-with-text-136x68.png)

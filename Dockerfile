@@ -7,8 +7,8 @@ COPY . /public
 # Set Workdir
 WORKDIR /public
 
-# Expose Port 5000
-EXPOSE 5000
+# Expose Port 80
+EXPOSE 80
 
 # Run Application
 CMD ./DotBlog.Server
