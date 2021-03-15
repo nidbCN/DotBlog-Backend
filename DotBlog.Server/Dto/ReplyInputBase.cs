@@ -32,7 +32,7 @@ namespace DotBlog.Server.Dto
             set => _link = value.HtmlSantinizerStandard();
         }
 
-        public override string UserExplore
+        public override string UserBrowser
         {
             get => _userExplore;
             set => _userExplore = value.HtmlSantinizerStandard();
