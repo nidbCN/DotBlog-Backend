@@ -21,27 +21,27 @@ namespace DotBlog.Server
         }
 
         /// <summary>
-        /// API °æ±¾
+        /// API ç‰ˆæœ¬
         /// </summary>
         public const string ApiVersion = "v1";
 
         public IConfiguration Configuration { get; }
 
-        // ·şÎñ×¢ÈëÅäÖÃ
+        // æœåŠ¡æ³¨å…¥é…ç½®
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppConfig>(
                 Configuration.GetSection("AppConfig")
                 );
-            // Ìí¼ÓÊı¾İ¿âÉÏÏÂÎÄ
+            // æ·»åŠ æ•°æ®åº“ä¸Šä¸‹æ–‡
             services.AddDbContext<DotBlogDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
             );
 
-            // Ìí¼Ó AutoMapper
+            // æ·»åŠ  AutoMapper
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            // Ìí¼ÓÎÄÕÂ¡¢»Ø¸´·şÎñ
+            // æ·»åŠ æ–‡ç« ã€å›å¤æœåŠ¡
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<IReplyService, ReplyService>();
 
@@ -60,31 +60,33 @@ namespace DotBlog.Server
                 );
         }
 
-        // HTTP ¹ÜµÀÖĞ¼ä¼şÅäÖÃ
+        // HTTP ç®¡é“ä¸­é—´ä»¶é…ç½®
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
-                // ¿ª·¢»·¾³
+                // å¼€å‘ç¯å¢ƒ
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-
-                app.UseSwaggerUI(opt =>
-                    opt.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}")
-                );
             }
 
-            // HTTPS ÖØ¶¨Ïò
-            app.UseHttpsRedirection();
+            // å¼€å¯Swaggeré¡µé¢
+            app.UseSwagger();
+
+            app.UseSwaggerUI(opt =>
+                opt.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}")
+            );
+
+            // HTTPS é‡å®šå‘
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            // ¿çÓò
+            // è·¨åŸŸ
             app.UseCors("Open");
-            //// Éí·İÑéÖ¤
-            //app.UseAuthentication();
-            //// ÊÚÈ¨
-            //app.UseAuthorization();
+            //// èº«ä»½éªŒè¯
+            // app.UseAuthentication();
+            //// æˆæƒ
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
