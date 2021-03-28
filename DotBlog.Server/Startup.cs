@@ -1,4 +1,5 @@
 using System;
+using AngleSharp;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using DotBlog.Server.Data;
 using DotBlog.Server.Models;
 using DotBlog.Server.Services;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace DotBlog.Server
 {
@@ -18,6 +20,15 @@ namespace DotBlog.Server
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            var baseUrlConfig = Configuration["AppConfig:BaseUrl"];
+            if (string.IsNullOrWhiteSpace(baseUrlConfig))
+            {
+                BaseUrl = string.Empty;
+            }
+            else if(!baseUrlConfig.StartsWith('/'))
+            {
+                BaseUrl = "/" + baseUrlConfig;
+            }
         }
 
         /// <summary>
@@ -27,12 +38,15 @@ namespace DotBlog.Server
 
         public IConfiguration Configuration { get; }
 
+        public string BaseUrl { get; }
+
         // 服务注入配置
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AppConfig>(
                 Configuration.GetSection("AppConfig")
-                );
+            );
+            
             // 添加数据库上下文
             services.AddDbContext<DotBlogDbContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
@@ -49,6 +63,7 @@ namespace DotBlog.Server
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.AddServer(new OpenApiServer{Url = BaseUrl});
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo { Title = "DotBlog Server  - Powered by .NET 5.0", Version = ApiVersion });
             });
 
@@ -70,11 +85,15 @@ namespace DotBlog.Server
             }
 
             // 开启Swagger页面
-            app.UseSwagger();
+            app.UseSwagger(opt=>
+                opt.RouteTemplate = "/docs/{documentName}/swagger.json"
+            );
 
             app.UseSwaggerUI(opt =>
-                opt.SwaggerEndpoint($"/swagger/{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}")
-            );
+            {
+                opt.RoutePrefix = "docs";
+                opt.SwaggerEndpoint($"{ApiVersion}/swagger.json", $"DotBlog Server {ApiVersion}");
+            });
 
             // HTTPS 重定向
             // app.UseHttpsRedirection();
