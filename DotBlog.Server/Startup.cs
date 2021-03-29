@@ -28,6 +28,10 @@ namespace DotBlog.Server
             {
                 BaseUrl = "/" + baseUrlConfig;
             }
+            else
+            {
+                BaseUrl = baseUrlConfig;
+            }
         }
 
         /// <summary>
