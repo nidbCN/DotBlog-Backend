@@ -1,10 +1,10 @@
 #！/bin/bash
 
-echo "Start Build Project."
+echo "[I]  Start Build Project."
 ./build.sh
 
-echo "Copy Dockerfile."
+echo "[II] Copy Dockerfile."
 cp Dockerfile Release/Dockerfile
  
-echo "Build Docker Image."
-docker build -t dotblog-server:v1.4 Release/ 
+echo "[III]Build Docker Image."
+docker build -t dotblog-server:v1.4.1 Release/ 
