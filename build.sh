@@ -12,7 +12,7 @@ rm -f DotBlog.Server/DotBlog.db
 $HOME/.dotnet/tools/dotnet-ef database update --project DotBlog.Server
 
 echo "\t[2]Build Application."
-dotnet publish -c Release -r ubuntu.20.04-x64 -o ./Release
+dotnet publish -c Release -p:PublishReadyToRun=true --no-self-contained -r ubuntu.20.04-x64 -o ./Release
 
 echo "\t[3]Copy Files."
 cp DotBlog.Server/DotBlog.db Release/DotBlog.db
