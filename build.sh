@@ -1,6 +1,6 @@
 #！/bin/bash
 if [ ! -d "/Release" ]; then
-    echo \t"i0]New Release Directory."
+    echo "\t[0]New Release Directory."
     mkdir /Release
 else
     echo "\t[0]Clean Release Directory."
