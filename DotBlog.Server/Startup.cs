@@ -64,9 +64,9 @@ namespace DotBlog.Server
                         case "postgresql":
                             options.UseNpgsql(connStr);
                             break;
-                        case "mysql":
-                            options.UseMySQL(connStr);
-                            break;
+                        // case "mysql":
+                        //     options.UseMySQL(connStr);
+                        //     break;
                         default:
                             options.UseSqlite(connStr);
                             break;
