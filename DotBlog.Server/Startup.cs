@@ -49,10 +49,29 @@ namespace DotBlog.Server
             services.Configure<AppConfig>(
                 Configuration.GetSection("AppConfig")
             );
-            
+
+
             // 添加数据库上下文
             services.AddDbContext<DotBlogDbContext>(
-                options => options.UseSqlite(Configuration.GetConnectionString("SqLite"))
+                options =>
+                {
+                    var dbType = 
+                        Configuration.GetSection("DataBase")?.Value ?? "SqLite";
+                    var connStr = Configuration.GetConnectionString(dbType);
+
+                    switch (dbType.ToLower())
+                    {
+                        case "postgresql":
+                            options.UseNpgsql(connStr);
+                            break;
+                        case "mysql":
+                            options.UseMySQL(connStr);
+                            break;
+                        default:
+                            options.UseSqlite(connStr);
+                            break;
+                    }
+                }
             );
 
             // 添加 AutoMapper
@@ -69,6 +88,7 @@ namespace DotBlog.Server
                 c.AddServer(new OpenApiServer{Url = BaseUrl});
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo { Title = "DotBlog Server  - Powered by .NET 5.0", Version = ApiVersion });
             });
+
 
             services.AddCors(options =>
                 options.AddPolicy("Open", builder =>
