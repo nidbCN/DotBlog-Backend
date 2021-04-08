@@ -27,6 +27,18 @@
 
 > 注意，MySql EF 8.0.22不兼容，暂时无法使用！
 
+请先安装dotnet SDK和`EF Core 工具`  
+参考以下命令(Ubuntu 20.10):
+```sh
+wget https://packages.microsoft.com/config/ubuntu/20.10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get update; \
+  sudo apt-get install -y apt-transport-https && \
+  sudo apt-get update && \
+  sudo apt-get install -y dotnet-sdk-5.0
+dotnet tool install --global dotnet-ef
+```
+
 `appsettings.json` :
 
 ```json
@@ -43,7 +55,7 @@
   "ConnectionStrings": {
     "SqLite": "Data Source=DotBlog.db; ",
     "MySql":"Server=myServerAddress;Port=1234;Database=myDataBase;Uid=myUsername;Pwd=myPassword;",
-    "PostgreSql":"Provider=PostgreSQL OLE DB Provider;Data Source=myServerAddress;location=myDataBase;User ID=myUsername;password=myPassword;timeout=1000;"
+    "PostgreSql":"host=myServerAddress;port=1234;database=dotblog;user id=myUsername;password=myPassword"
   },
   "AppConfig": {
     "BaseUrl": "/DotBlog/",
