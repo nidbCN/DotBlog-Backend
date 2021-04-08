@@ -4,6 +4,7 @@ using DotBlog.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DotBlog.Server.Migrations
 {
@@ -14,43 +15,74 @@ namespace DotBlog.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("Relational:MaxIdentifierLength", 63)
+                .HasAnnotation("ProductVersion", "5.0.5")
+                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("DotBlog.Server.Entities.Account", b =>
+                {
+                    b.Property<long>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
+
+                    b.Property<string>("Mail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("Phone");
+
+                    b.ToTable("Accounts");
+                });
 
             modelBuilder.Entity("DotBlog.Server.Entities.Article", b =>
                 {
-                    b.Property<uint>("ArticleId")
+                    b.Property<long>("ArticleId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
                     b.Property<string>("Alias")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Author")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Category")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Content")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsShown")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
-                    b.Property<uint>("Like")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("Like")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("PostTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<uint>("Read")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("Read")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Title")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("ArticleId");
 
@@ -61,57 +93,58 @@ namespace DotBlog.Server.Migrations
                     b.HasData(
                         new
                         {
-                            ArticleId = 1u,
+                            ArticleId = 1L,
                             Alias = "Hello-World",
                             Author = "DotBlog",
                             Content = "欢迎使用，这是DotBlog自动生成的第一篇文章",
                             Description = "自动生成的第一篇文章",
                             IsShown = true,
-                            Like = 0u,
-                            PostTime = new DateTime(2021, 2, 26, 16, 42, 1, 950, DateTimeKind.Local).AddTicks(3885),
-                            Read = 0u,
+                            Like = 0L,
+                            PostTime = new DateTime(2021, 4, 8, 21, 31, 31, 659, DateTimeKind.Local).AddTicks(9652),
+                            Read = 0L,
                             Title = "HelloWorld"
                         });
                 });
 
             modelBuilder.Entity("DotBlog.Server.Entities.Reply", b =>
                 {
-                    b.Property<uint>("ReplyId")
+                    b.Property<long>("ReplyId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.None);
 
-                    b.Property<uint>("ArticleId")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("ArticleId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Author")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("AvatarUrl")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Content")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
-                    b.Property<uint>("Like")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("Like")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Link")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("Mail")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ReplyTime")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<uint>("ReplyTo")
-                        .HasColumnType("INTEGER");
+                    b.Property<long>("ReplyTo")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UserExplore")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserPlatform")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.HasKey("ReplyId");
 

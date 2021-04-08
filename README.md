@@ -25,6 +25,8 @@
 
 ## 设置
 
+> 注意，MySql EF 8.0.22不兼容，暂时无法使用！
+
 `appsettings.json` :
 
 ```json
