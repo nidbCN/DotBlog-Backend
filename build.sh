@@ -9,6 +9,7 @@ fi
 
 echo "\t[1]Update database."
 rm -f DotBlog.Server/DotBlog.db
+$HOME/.dotnet/tools/dotnet-ef migrations add InitialCreate --project DotBlog.Server
 $HOME/.dotnet/tools/dotnet-ef database update --project DotBlog.Server
 
 echo "\t[2]Build Application."

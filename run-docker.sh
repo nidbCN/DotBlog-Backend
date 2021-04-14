@@ -1,3 +1,3 @@
 #！/bin/bash
 
-docker run -d -p 5001:80 dotblog-server:v1.4.3
+docker run -d -p 5001:80 dotblog-server:v1.4.4

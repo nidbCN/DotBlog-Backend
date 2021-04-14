@@ -7,4 +7,4 @@ echo "[II] Copy Dockerfile."
 cp Dockerfile Release/Dockerfile
  
 echo "[III]Build Docker Image."
-docker build -t dotblog-server:v1.4.3 Release/ 
+docker build -t dotblog-server:v1.4.4 Release/ 
