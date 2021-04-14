@@ -1,8 +1,11 @@
-﻿namespace DotBlog.Server.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DotBlog.Server.Entities
 {
     public class Account
     {
-        public uint UserId { get; set; }
+        [NotNull]
+        public int UserId { get; set; }
 
         /// <summary>
         /// 用户名

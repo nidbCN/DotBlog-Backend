@@ -40,10 +40,15 @@ namespace DotBlog.Server.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // 设置键和索引
+            replyConf.Property(it => it.ArticleId).IsRequired();
+            replyConf.Property(it => it.ReplyId).IsRequired();
             replyConf.HasKey(it => it.ReplyId);
             replyConf.HasIndex(it => it.ReplyId);
+
+            articleConf.Property(it => it.ArticleId).IsRequired();
             articleConf.HasKey(it => it.ArticleId);
             articleConf.HasIndex(it => it.ArticleId);
+
             accountConf.HasKey(it => it.UserId);
             accountConf.HasIndex(it => it.Name);
             accountConf.HasIndex(it => it.Name);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotBlog.Server.Entities
 {
@@ -8,7 +9,8 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 文章ID
         /// </summary>
-        public uint ArticleId { get; set; }
+        [NotNull]
+        public int ArticleId { get; set; }
 
         /// <summary>
         /// 文章别名

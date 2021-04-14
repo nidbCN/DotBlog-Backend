@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DotBlog.Server.Entities
 {
@@ -22,22 +23,24 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 评论的文章ID
         /// </summary>
-        public uint ArticleId { get; set; }
+        [NotNull]
+        public int ArticleId { get; set; }
 
         /// <summary>
         /// 某条评论的ID
         /// </summary>
-        public uint ReplyId { get; set; }
+        [NotNull]
+        public int ReplyId { get; set; }
 
         /// <summary>
         /// 回复给某条评论ID
         /// </summary>
-        public uint ReplyTo { get; set; }
+        public int ReplyTo { get; set; }
 
         /// <summary>
         /// 点赞数
         /// </summary>
-        public uint Like { get; set; } = 0;
+        public int Like { get; set; } = 0;
 
         /// <summary>
         /// 评论者
