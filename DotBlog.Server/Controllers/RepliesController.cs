@@ -20,22 +20,22 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 文章操作服务
         /// </summary>
-        private IArticleService ArticleService { get; }
+        private readonly IArticleService _articleService;
 
         /// <summary>
         /// 回复操作服务
         /// </summary>
-        private IReplyService ReplyService { get; }
+        private readonly IReplyService _replyService;
 
         /// <summary>
         /// 日志记录服务
         /// </summary>
-        private ILogger<RepliesController> Logger { get; }
+        private readonly ILogger<RepliesController> _logger;
 
         /// <summary>
         /// 对象映射服务
         /// </summary>
-        private IMapper Mapper { get; }
+        private readonly IMapper _mapper;
 
         // 自定义字段
         private JsonSerializerOptions PrintOptions { get; }
@@ -44,10 +44,10 @@ namespace DotBlog.Server.Controllers
         // 构造函数
         public RepliesController(IArticleService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
         {
-            ArticleService = articleService;
-            ReplyService = replyService;
-            Logger = logger;
-            Mapper = mapper;
+            _articleService = articleService;
+            _replyService = replyService;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -58,24 +58,24 @@ namespace DotBlog.Server.Controllers
         [HttpGet(Name = nameof(GetReplies))]
         public async Task<ActionResult<ICollection<ReplyContentDto>>> GetReplies([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(GetReplies)}.");
+            _logger.LogInformation($"Match method {nameof(GetReplies)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 获取回复
-            var replies = await ReplyService.GetRepliesAsync(article);
+            var replies = await _replyService.GetRepliesAsync(article);
 
             // 返回评论Dto结果
             return Ok(
-                Mapper.Map<ICollection<ReplyContentDto>>(replies)
+                _mapper.Map<ICollection<ReplyContentDto>>(replies)
             );
         }
 
@@ -88,36 +88,36 @@ namespace DotBlog.Server.Controllers
         [HttpPost("{replyId}/Like")]
         public async Task<IActionResult> UpdateReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
+            _logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 获取回复
-            var reply = await ReplyService.GetReplyAsync(article, replyId);
+            var reply = await _replyService.GetReplyAsync(article, replyId);
 
             // 判断是否找到回复
             // ReSharper disable once InvertIf
             if (reply == null)
             {
-                Logger.LogInformation("No reply was found, return a NotFound.");
+                _logger.LogInformation("No reply was found, return a NotFound.");
                 return NotFound();
             }
 
             // 更新回复点赞
-            ReplyService.UpdateReplyLike(reply);
+            _replyService.UpdateReplyLike(reply);
 
             // ReSharper disable once InvertIf
-            if (!await ReplyService.SaveChangesAsync())
+            if (!await _replyService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回结果
@@ -133,38 +133,38 @@ namespace DotBlog.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ReplyContentDto>> CreateReply([FromRoute] uint articleId, [FromBody] ReplyAddDto inputReply)
         {
-            Logger.LogInformation($"Match method {nameof(CreateReply)}.");
+            _logger.LogInformation($"Match method {nameof(CreateReply)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            Logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, PrintOptions));
+            _logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, PrintOptions));
 
             // Dto映射为实体
-            var reply = Mapper.Map<Reply>(inputReply);
+            var reply = _mapper.Map<Reply>(inputReply);
 
             // 回复文章
-            var result = ReplyService.PostReply(article, reply);
+            var result = _replyService.PostReply(article, reply);
 
             if (result == null)
             {
                 return Accepted();
             }
 
-            if (!await ReplyService.SaveChangesAsync())
+            if (!await _replyService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回结果
-            var returnDto = Mapper.Map<ReplyContentDto>(result);
+            var returnDto = _mapper.Map<ReplyContentDto>(result);
             return Created($"{Startup.ApiVersion}/articles/{articleId}/replies/{returnDto.ReplyId}",returnDto);
         }
 
@@ -178,34 +178,34 @@ namespace DotBlog.Server.Controllers
         [HttpDelete("{replyId}")]
         public async Task<IActionResult> DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            Logger.LogInformation($"Match method {nameof(DeleteReply)}.");
+            _logger.LogInformation($"Match method {nameof(DeleteReply)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            var replyItem = await ReplyService.GetReplyAsync(article, replyId);
+            var replyItem = await _replyService.GetReplyAsync(article, replyId);
 
             // 判断是否找到回复
             // ReSharper disable once InvertIf
             if (replyItem == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            ReplyService.DeleteReply(replyItem);
+            _replyService.DeleteReply(replyItem);
 
             // ReSharper disable once InvertIf
-            if (!await ReplyService.SaveChangesAsync())
+            if (!await _replyService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             return NoContent();

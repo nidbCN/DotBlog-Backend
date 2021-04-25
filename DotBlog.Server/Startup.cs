@@ -39,7 +39,7 @@ namespace DotBlog.Server
         /// </summary>
         public const string ApiVersion = "v1";
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         public string BaseUrl { get; }
 

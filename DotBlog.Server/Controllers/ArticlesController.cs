@@ -21,17 +21,17 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 文章操作服务
         /// </summary>
-        private IArticleService ArticleService { get; }
+        private readonly IArticleService _articleService;
 
         /// <summary>
         /// 日志记录服务
         /// </summary>
-        private ILogger<ArticlesController> Logger { get; }
+        private readonly ILogger<ArticlesController> _logger;
 
         /// <summary>
         /// 对象映射服务
         /// </summary>
-        private IMapper Mapper { get; }
+        private readonly IMapper _mapper;
 
         // 自定义字段
 
@@ -45,11 +45,11 @@ namespace DotBlog.Server.Controllers
         public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger, IMapper mapper)
         {
             // 依赖注入
-            ArticleService = articleService
+            _articleService = articleService
                              ?? throw new ArgumentNullException(nameof(articleService));
-            Logger = logger
+            _logger = logger
                      ?? throw new ArgumentNullException(nameof(logger));
-            Mapper = mapper
+            _mapper = mapper
                      ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -61,21 +61,21 @@ namespace DotBlog.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<ArticleListDto>>> GetArticleList([FromQuery] int? limit)
         {
-            Logger.LogInformation($"Match method {nameof(GetArticleList)}.");
+            _logger.LogInformation($"Match method {nameof(GetArticleList)}.");
             // 获取文章列表
-            var articlesList = await ArticleService.GetArticlesAsync(limit);
+            var articlesList = await _articleService.GetArticlesAsync(limit);
 
             // 判空
             if (articlesList.Count == 0)
             {
-                Logger.LogInformation("No articles were found, return a empty list.");
+                _logger.LogInformation("No articles were found, return a empty list.");
             }
 
-            Logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articlesList, PrintOptions)}");
+            _logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articlesList, PrintOptions)}");
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ICollection<ArticleListDto>>(articlesList)
+                _mapper.Map<ICollection<ArticleListDto>>(articlesList)
             );
         }
 
@@ -87,23 +87,23 @@ namespace DotBlog.Server.Controllers
         [HttpGet("{articleId}", Name = nameof(GetArticle))]
         public async Task<ActionResult<ArticleContentDto>> GetArticle([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(GetArticle)}.");
+            _logger.LogInformation($"Match method {nameof(GetArticle)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判空
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
-            Logger.LogDebug($"Find article: {JsonSerializer.Serialize(article, PrintOptions)}");
+            _logger.LogDebug($"Find article: {JsonSerializer.Serialize(article, PrintOptions)}");
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ArticleContentDto>(article)
+                _mapper.Map<ArticleContentDto>(article)
             );
         }
 
@@ -118,29 +118,29 @@ namespace DotBlog.Server.Controllers
         [HttpPut("{articleId}")]
         public async Task<ActionResult<ArticleContentDto>> UpdateArticle([FromRoute] uint articleId, [FromBody] ArticleUpdateDto inputArticle)
         {
-            Logger.LogInformation($"Match method {nameof(UpdateArticle)}.");
+            _logger.LogInformation($"Match method {nameof(UpdateArticle)}.");
 
             // 获取旧文章
-            var articleOld = await ArticleService.GetArticleAsync(articleId);
+            var articleOld = await _articleService.GetArticleAsync(articleId);
 
             if (articleOld == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 更新文章
-            Mapper.Map(inputArticle, articleOld);
+            _mapper.Map(inputArticle, articleOld);
 
             // 保存更改
-            if (!await ArticleService.SaveChangesAsync())
+            if (!await _articleService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回Dto结果
             return Ok(
-                Mapper.Map<ArticleContentDto>(articleOld)
+                _mapper.Map<ArticleContentDto>(articleOld)
             );
         }
 
@@ -152,26 +152,26 @@ namespace DotBlog.Server.Controllers
         [HttpPut("{articleId}/Like")]
         public async Task<IActionResult> UpdateArticleLike([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
+            _logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 更新点赞
-            ArticleService.UpdateArticleLike(article);
+            _articleService.UpdateArticleLike(article);
 
             // ReSharper disable once InvertIf
-            if (!await ArticleService.SaveChangesAsync())
+            if (!await _articleService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回结果
@@ -186,26 +186,26 @@ namespace DotBlog.Server.Controllers
         [HttpPut("{articleId}/Read")]
         public async Task<IActionResult> UpdateArticleRead([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");
+            _logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 更新文章阅读数
-            ArticleService.UpdateArticleRead(article);
+            _articleService.UpdateArticleRead(article);
 
             // ReSharper disable once InvertIf
-            if (!await ArticleService.SaveChangesAsync())
+            if (!await _articleService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回结果
@@ -221,26 +221,26 @@ namespace DotBlog.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<ArticleContentDto>> CreateArticle([FromBody] ArticleAddDto inputArticle)
         {
-            Logger.LogInformation($"Match method {nameof(CreateArticle)}.");
+            _logger.LogInformation($"Match method {nameof(CreateArticle)}.");
 
             // Dto映射为实体
-            var article = Mapper.Map<Article>(inputArticle);
+            var article = _mapper.Map<Article>(inputArticle);
 
             // 新建文章
-            var returnArticle = ArticleService.PostArticle(article);
+            var returnArticle = _articleService.PostArticle(article);
 
             if (returnArticle == null)
             {
                 return Accepted();
             }
 
-            if (!await ArticleService.SaveChangesAsync())
+            if (!await _articleService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回Dto结果
-            var returnArticleDto = Mapper.Map<ArticleContentDto>(returnArticle);
+            var returnArticleDto = _mapper.Map<ArticleContentDto>(returnArticle);
             return CreatedAtRoute(nameof(GetArticle), new { articleId = returnArticleDto.ArticleId }, returnArticleDto);
         }
 
@@ -253,25 +253,25 @@ namespace DotBlog.Server.Controllers
         [HttpDelete("{articleId}")]
         public async Task<IActionResult> DeleteArticle([FromRoute] uint articleId)
         {
-            Logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
+            _logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
 
             // 获取文章
-            var article = await ArticleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetArticleAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
             if (article == null)
             {
-                Logger.LogInformation("No article was found, return a NotFound.");
+                _logger.LogInformation("No article was found, return a NotFound.");
                 return NotFound();
             }
 
             // 删除文章
-            ArticleService.DeleteArticle(article);
+            _articleService.DeleteArticle(article);
 
-            if (!await ArticleService.SaveChangesAsync())
+            if (!await _articleService.SaveChangesAsync())
             {
-                Logger.LogError("Cannot save changes, UnKnow error.");
+                _logger.LogError("Cannot save changes, UnKnow error.");
             }
 
             // 返回结果
