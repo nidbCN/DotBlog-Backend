@@ -11,21 +11,19 @@ namespace DotBlog.Server.Services
 {
     public class ReplyService : IReplyService
     {
-        private DotBlogDbContext Context { get; }
+        private readonly DotBlogDbContext _context;
 
         public ReplyService(DotBlogDbContext context)
         {
-            Context = context;
+            _context = context ??
+                      throw new ArgumentNullException(nameof(context));
         }
 
         public async Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
         {
-            if (articleItem == null)
-            {
-                throw new ArgumentNullException(nameof(articleItem));
-            }
+            if (articleItem == null) throw new ArgumentNullException(nameof(articleItem));
 
-            return await Context.Replies.FirstOrDefaultAsync(it => it.Article == articleItem);
+            return await _context.Replies.FirstOrDefaultAsync(it => it.Article == articleItem);
         }
 
         //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
@@ -37,10 +35,9 @@ namespace DotBlog.Server.Services
         public async Task<ICollection<Reply>> GetRepliesAsync(Article article)
         {
             // 判空
-            article = article
-                      ?? throw new ArgumentNullException(nameof(article));
+            if (article == null) throw new ArgumentNullException(nameof(article));
 
-            return await Context.Replies.Where(it => it.Article == article).ToListAsync();
+            return await _context.Replies.Where(it => it.Article == article).ToListAsync();
 
             // return articleItem.Replies;
         }
@@ -48,8 +45,7 @@ namespace DotBlog.Server.Services
         public void UpdateReplyLike(Reply reply)
         {
             // 判空
-            reply = reply
-                    ?? throw new ArgumentNullException(nameof(reply));
+            if (reply == null) throw new ArgumentNullException(nameof(reply));
 
             // 自增
             reply.Like++;
@@ -58,9 +54,7 @@ namespace DotBlog.Server.Services
         public Reply PostReply(Article article, Reply reply)
         {
             // 判空
-            reply = reply
-                    ?? throw new ArgumentNullException(nameof(reply));
-
+            if (reply == null) throw new ArgumentNullException(nameof(reply));
 
             // 新建回复
             reply.ArticleId = article.ArticleId;
@@ -70,24 +64,24 @@ namespace DotBlog.Server.Services
                 return null;
             }
 
-            Context.Replies.Add(reply);
+            _context.Replies.Add(reply);
             return reply;
         }
 
         public void DeleteReply(Reply reply)
         {
-            reply = reply
-                    ?? throw new ArgumentNullException(nameof(reply));
+            // 判空
+            if (reply == null) throw new ArgumentNullException(nameof(reply));
 
             // 删除
-            Context.Replies.Remove(reply);
+            _context.Replies.Remove(reply);
         }
 
 
         public async Task<bool> SaveChangesAsync() =>
-            await Context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync() > 0;
 
         public bool SaveChanges() =>
-            Context.SaveChanges() > 0;
+            _context.SaveChanges() > 0;
     }
 }

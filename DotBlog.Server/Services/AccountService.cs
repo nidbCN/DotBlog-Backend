@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using DotBlog.Server.Data;
-using DotBlog.Server.Entities;
 using DotBlog.Server.Models;
 using DotBlog.Shared.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -13,23 +10,26 @@ namespace DotBlog.Server.Services
 {
     public class AccountService : IAccountService
     {
-        private IOptions<AppConfig> Options { get; }
-        private DotBlogDbContext Context { get; }
+        private readonly IOptions<AppConfig> _options;
+        private readonly DotBlogDbContext _context;
+
         public AccountService(IOptions<AppConfig> options, DotBlogDbContext context)
         {
-            Options = options
+            _options = options
                       ?? throw new ArgumentNullException(nameof(options));
-            Context = context
+            _context = context
                       ?? throw new ArgumentNullException(nameof(context));
 
         }
 
         public async Task<bool> Verify(AccountLoginDto account)
         {
-            account.Password =
-                Helper.EncryptPassword.EncryptPasswordWithSalt(account.Password, Options.Value.PasswordSalt);
+            throw new NotSupportedException("Have not finished!");
 
-            return await Context.Accounts.AnyAsync (it =>
+            account.Password =
+                Helper.EncryptPassword.EncryptPasswordWithSalt(account.Password, _options.Value.PasswordSalt);
+
+            return await _context.Accounts.AnyAsync (it =>
                 (it.UserId.ToString() == account.Identification ||
                 it.Name == account.Identification ||
                 it.Mail == account.Identification ||

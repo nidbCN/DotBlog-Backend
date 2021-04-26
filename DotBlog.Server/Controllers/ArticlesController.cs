@@ -38,19 +38,18 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 格式化JSON
         /// </summary>
-        private JsonSerializerOptions PrintOptions { get; }
-            = new() { WriteIndented = true };
+        private readonly JsonSerializerOptions _printOptions = new() { WriteIndented = true };
 
         // 构造函数
         public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger, IMapper mapper)
         {
             // 依赖注入
-            _articleService = articleService
-                             ?? throw new ArgumentNullException(nameof(articleService));
-            _logger = logger
-                     ?? throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper
-                     ?? throw new ArgumentNullException(nameof(mapper));
+            _articleService = articleService ??
+                              throw new ArgumentNullException(nameof(articleService));
+            _logger = logger ??
+                      throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ??
+                      throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -71,7 +70,7 @@ namespace DotBlog.Server.Controllers
                 _logger.LogInformation("No articles were found, return a empty list.");
             }
 
-            _logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articlesList, PrintOptions)}");
+            _logger.LogDebug($"Find articles: {JsonSerializer.Serialize(articlesList, _printOptions)}");
 
             // 返回Dto结果
             return Ok(
@@ -99,7 +98,7 @@ namespace DotBlog.Server.Controllers
                 return NotFound();
             }
 
-            _logger.LogDebug($"Find article: {JsonSerializer.Serialize(article, PrintOptions)}");
+            _logger.LogDebug($"Find article: {JsonSerializer.Serialize(article, _printOptions)}");
 
             // 返回Dto结果
             return Ok(

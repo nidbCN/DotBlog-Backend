@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
@@ -38,16 +39,19 @@ namespace DotBlog.Server.Controllers
         private readonly IMapper _mapper;
 
         // 自定义字段
-        private JsonSerializerOptions PrintOptions { get; }
-            = new() { WriteIndented = true };
+        private readonly JsonSerializerOptions _printOptions = new() { WriteIndented = true };
 
         // 构造函数
         public RepliesController(IArticleService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
         {
-            _articleService = articleService;
-            _replyService = replyService;
-            _logger = logger;
-            _mapper = mapper;
+            _articleService = articleService ??
+                              throw new ArgumentNullException(nameof(articleService));
+            _replyService = replyService ?? 
+                            throw new ArgumentNullException(nameof(replyService));
+            _logger = logger ?? 
+                      throw new ArgumentNullException(nameof(logger));
+            _mapper = mapper ?? 
+                      throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -145,7 +149,7 @@ namespace DotBlog.Server.Controllers
                 return NotFound();
             }
 
-            _logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, PrintOptions));
+            _logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, _printOptions));
 
             // Dto映射为实体
             var reply = _mapper.Map<Reply>(inputReply);

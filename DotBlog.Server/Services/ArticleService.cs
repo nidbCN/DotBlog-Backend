@@ -11,15 +11,16 @@ namespace DotBlog.Server.Services
 {
     public class ArticleService : IArticleService
     {
-        private DotBlogDbContext Context { get; }
+        private readonly DotBlogDbContext _context;
 
         public ArticleService(DotBlogDbContext context)
         {
-            Context = context;
+            _context = context ??
+                       throw new ArgumentNullException(nameof(context));
         }
 
 
-        // 获取相关
+        #region 获取相关
 
         public async Task<ICollection<Article>> GetArticlesAsync(int? limit)
         {
@@ -27,7 +28,7 @@ namespace DotBlog.Server.Services
             var limitNotNull = limit ?? -1;
 
             // 查询
-            return await Context.Articles
+            return await _context.Articles
                 .OrderBy(it => it.PostTime.Ticks)
                 .Take(limitNotNull)
                 .ToListAsync();
@@ -39,7 +40,7 @@ namespace DotBlog.Server.Services
             var limitNotNull = limit ?? -1;
 
             // 查询
-            return await Context.Articles
+            return await _context.Articles
                 .Where(it => it.Category == category)
                 .OrderBy(it => it.PostTime.Ticks)
                 .Take(limitNotNull)
@@ -47,15 +48,17 @@ namespace DotBlog.Server.Services
         }
 
         public async Task<Article> GetArticleAsync(uint articleId) =>
-            await Context.Articles
+            await _context.Articles
                 .FirstOrDefaultAsync(it => it.ArticleId == articleId);
 
         public Article GetArticle(uint articleId) =>
-            Context.Articles
+            _context.Articles
                 .FirstOrDefault(it => it.ArticleId == articleId);
 
+        #endregion
 
-        // 更新相关
+
+        #region 更新相关
 
         public void UpdateArticleLike(Article article)
         {
@@ -93,8 +96,10 @@ namespace DotBlog.Server.Services
             return articleOld;
         }
 
+        #endregion
 
-        // 写入相关
+
+        #region 写入相关
 
         public Article PostArticle(Article article)
         {
@@ -105,13 +110,15 @@ namespace DotBlog.Server.Services
             // 赋值给article
             article.PostTime = DateTime.Now;
             // 添加文章
-            Context.Articles.Add(article);
+            _context.Articles.Add(article);
             // 返回结果
             return article;
         }
 
+        #endregion
 
-        // 删除相关
+
+        #region 删除相关
 
         public void DeleteArticle(Article article)
         {
@@ -119,14 +126,16 @@ namespace DotBlog.Server.Services
             article = article
                       ?? throw new ArgumentNullException(nameof(article));
 
-                // 删除文章
-            Context.Articles.Remove(article);
+            // 删除文章
+            _context.Articles.Remove(article);
         }
 
         public async Task<bool> SaveChangesAsync() =>
-            await Context.SaveChangesAsync() > 0;
+            await _context.SaveChangesAsync() > 0;
 
         public bool SaveChanges() =>
-            Context.SaveChanges() > 0;
+            _context.SaveChanges() > 0;
+
+        #endregion
     }
 }

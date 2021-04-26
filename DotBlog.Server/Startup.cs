@@ -19,19 +19,21 @@ namespace DotBlog.Server
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
             var baseUrlConfig = Configuration["AppConfig:BaseUrl"];
             if (string.IsNullOrWhiteSpace(baseUrlConfig))
             {
-                BaseUrl = string.Empty;
+                _baseUrl = new Uri(string.Empty);
             }
             else if(!baseUrlConfig.StartsWith('/'))
             {
-                BaseUrl = "/" + baseUrlConfig;
+                _baseUrl = new Uri(baseUrlConfig);
             }
             else
             {
-                BaseUrl = baseUrlConfig;
+                _baseUrl = baseUrlConfig;
             }
+
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace DotBlog.Server
 
         private IConfiguration Configuration { get; }
 
-        public string BaseUrl { get; }
+        private readonly Uri _baseUrl;
 
         // 服务注入配置
         public void ConfigureServices(IServiceCollection services)
@@ -85,7 +87,7 @@ namespace DotBlog.Server
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.AddServer(new OpenApiServer{Url = BaseUrl});
+                c.AddServer(new OpenApiServer{Url = _baseUrl});
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo { Title = "DotBlog Server  - Powered by .NET 5.0", Version = ApiVersion });
             });
 
