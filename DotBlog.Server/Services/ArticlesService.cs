@@ -1,6 +1,8 @@
 ﻿using DotBlog.Server.Data;
 using DotBlog.Server.Entities;
+using DotBlog.Server.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,44 +11,38 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Services
 {
-    public class ArticleService : IArticleService
+    public class ArticlesService : IArticlesService
     {
         private readonly DotBlogDbContext _context;
+        private readonly ILogger<ArticlesService> _logger;
+        private readonly IArticlesRepository _repository;
 
-        public ArticleService(DotBlogDbContext context)
+        public ArticlesService(DotBlogDbContext context, ILogger<ArticlesService> logger, IArticlesRepository repository)
         {
-            _context = context ??
-                       throw new ArgumentNullException(nameof(context));
+            _context = context;
+            _logger = logger;
+            _repository = repository;
         }
 
         #region 获取相关
 
-        public async Task<ICollection<Article>> GetArticlesAsync(int? limit)
+        public async Task<IList<Article>> GetAllAsync(int? limit)
         {
-            // 判空
-            var limitNotNull = limit ?? -1;
+            if (limit.HasValue)
+                return await _repository.GetAsync(0, limit.Value);
 
-            // 查询
-            return await _context.Articles
-                .OrderBy(it => it.PostTime.Ticks)
-                .Take(limitNotNull)
-                .ToListAsync();
+            return await _repository.GetAllAsync();
         }
 
-        public async Task<ICollection<Article>> GetArticlesAsync(int? limit, string category)
+        public async Task<IList<Article>> GetByCategory(int? limit, string category)
         {
-            // 判空
-            var limitNotNull = limit ?? -1;
+            if (limit.HasValue)
+                return await _repository.FindAllAsync(x => x.Category == category, limit.Value);
 
-            // 查询
-            return await _context.Articles
-                .Where(it => it.Category == category)
-                .OrderBy(it => it.PostTime.Ticks)
-                .Take(limitNotNull)
-                .ToListAsync();
+            return await _repository.FindAllAsync(x => x.Category == category);
         }
 
-        public async Task<Article> GetArticleAsync(uint articleId) =>
+        public async Task<Article> GetAsync(uint articleId) =>
             await _context.Articles
                 .FirstOrDefaultAsync(it => it.ArticleId == articleId);
 
@@ -59,7 +55,7 @@ namespace DotBlog.Server.Services
 
         #region 更新相关
 
-        public void UpdateArticleLike(Article article)
+        public void Like(Article article)
         {
             // 判空
             article = article
@@ -69,7 +65,7 @@ namespace DotBlog.Server.Services
             article.Like++;
         }
 
-        public void UpdateArticleRead(Article article)
+        public void Read(Article article)
         {
             // 判空
             article = article

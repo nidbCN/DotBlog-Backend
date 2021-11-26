@@ -29,7 +29,7 @@ builder.Services.AddDbContext<DotBlogDbContext>(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // 添加文章、回复服务
-builder.Services.AddScoped<IArticleService, ArticleService>();
+builder.Services.AddScoped<IArticlesService, ArticlesService>();
 builder.Services.AddScoped<IReplyService, ReplyService>();
 
 builder.Services.AddLogging();

@@ -76,7 +76,7 @@ namespace DotBlog.Server
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // 添加文章、回复服务
-            services.AddScoped<IArticleService, ArticleService>();
+            services.AddScoped<IArticlesService, ArticlesService>();
             services.AddScoped<IReplyService, ReplyService>();
 
             services.AddLogging();

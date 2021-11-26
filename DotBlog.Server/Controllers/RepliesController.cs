@@ -21,7 +21,7 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 文章操作服务
         /// </summary>
-        private readonly IArticleService _articleService;
+        private readonly IArticlesService _articleService;
 
         /// <summary>
         /// 回复操作服务
@@ -42,7 +42,7 @@ namespace DotBlog.Server.Controllers
         private readonly JsonSerializerOptions _printOptions = new() { WriteIndented = true };
 
         // 构造函数
-        public RepliesController(IArticleService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
+        public RepliesController(IArticlesService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
         {
             _articleService = articleService ??
                               throw new ArgumentNullException(nameof(articleService));
@@ -65,7 +65,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(GetReplies)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
@@ -95,7 +95,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
@@ -140,7 +140,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(CreateReply)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)
@@ -185,7 +185,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(DeleteReply)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             if (article == null)

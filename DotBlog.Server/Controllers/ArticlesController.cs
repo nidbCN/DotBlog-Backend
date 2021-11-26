@@ -22,7 +22,7 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 文章操作服务
         /// </summary>
-        private readonly IArticleService _articleService;
+        private readonly IArticlesService _articleService;
 
         /// <summary>
         /// 日志记录服务
@@ -42,7 +42,7 @@ namespace DotBlog.Server.Controllers
         private readonly JsonSerializerOptions _printOptions = new() { WriteIndented = true };
 
         // 构造函数
-        public ArticlesController(IArticleService articleService, ILogger<ArticlesController> logger, IMapper mapper)
+        public ArticlesController(IArticlesService articleService, ILogger<ArticlesController> logger, IMapper mapper)
         {
             // 依赖注入
             _articleService = articleService ??
@@ -63,7 +63,7 @@ namespace DotBlog.Server.Controllers
         {
             _logger.LogInformation($"Match method {nameof(GetArticleList)}.");
             // 获取文章列表
-            var articlesList = await _articleService.GetArticlesAsync(limit);
+            var articlesList = await _articleService.GetAllAsync(limit);
 
             // 判空
             if (articlesList.Count == 0)
@@ -90,7 +90,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(GetArticle)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判空
             if (article == null)
@@ -121,7 +121,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(UpdateArticle)}.");
 
             // 获取旧文章
-            var articleOld = await _articleService.GetArticleAsync(articleId);
+            var articleOld = await _articleService.GetAsync(articleId);
 
             if (articleOld == null)
             {
@@ -155,7 +155,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(UpdateArticleLike)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
@@ -166,7 +166,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新点赞
-            _articleService.UpdateArticleLike(article);
+            _articleService.Like(article);
 
             // ReSharper disable once InvertIf
             if (!await _articleService.SaveChangesAsync())
@@ -189,7 +189,7 @@ namespace DotBlog.Server.Controllers
             _logger.LogInformation($"Match method {nameof(UpdateArticleRead)}.");
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf
@@ -200,7 +200,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 更新文章阅读数
-            _articleService.UpdateArticleRead(article);
+            _articleService.Read(article);
 
             // ReSharper disable once InvertIf
             if (!await _articleService.SaveChangesAsync())
@@ -258,7 +258,7 @@ namespace DotBlog.Server.Controllers
 
 
             // 获取文章
-            var article = await _articleService.GetArticleAsync(articleId);
+            var article = await _articleService.GetAsync(articleId);
 
             // 判断是否找到文章
             // ReSharper disable once InvertIf

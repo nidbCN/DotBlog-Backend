@@ -4,55 +4,63 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Services
 {
-    public interface IArticleService
+    public interface IArticlesService
     {
-        // 获取相关
+        #region 获取
+        /// <summary>
+        /// 获取文章列表
+        /// </summary>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> GetAllAsync();
 
         /// <summary>
-        /// [异步]获取首页文章列表(限制)
+        /// 获取分页的文章列表
         /// </summary>
-        /// <param name="limit">数量限制，为null则不限制</param>
-        /// <returns>文章实例列表</returns>
-        Task<ICollection<Article>> GetArticlesAsync(int? limit);
+        /// <param name="page">页码</param>
+        /// <param name="limit">数量</param>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> GetAllAsync(int page, int limit);
 
         /// <summary>
-        /// [异步]获取首页文章列表(限制, 类别)
+        /// 按分类获取文章列表
         /// </summary>
-        /// <param name="limit">数量限制，为null则不限制</param>
-        /// <param name="category">分类名</param>
-        /// <returns>文章实例列表</returns>
-        Task<ICollection<Article>> GetArticlesAsync(int? limit, string category);
+        /// <param name="category">分类名称</param>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> GetByCategoryAsync(string category);
+
+        /// <summary>
+        /// 按分类获取分页的文章列表
+        /// </summary>
+        /// <param name="category">分类名称</param>
+        /// <param name="page">页码</param>
+        /// <param name="limit">数量</param>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> GetByCategoryAsync(string category, int page, int limit);
 
         /// <summary>
         /// 通过文章ID获得文章实例
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>文章实例</returns>
-        Article GetArticle(uint articleId);
+        public Task<Article> GetAsync(uint articleId);
 
-        /// <summary>
-        /// [异步]通过文章ID获得文章实例
-        /// </summary>
-        /// <param name="articleId">文章ID</param>
-        /// <returns>文章实例</returns>
-        Task<Article> GetArticleAsync(uint articleId);
+        #endregion
 
-        // 更新相关
+        #region 更新相关
 
         /// <summary>
         /// 更新文章的点赞数
         /// </summary>
-        /// <param name="article">文章实体</param>
+        /// <param name="articleId">文章id</param>
         /// <returns>更新结果</returns>
-        void UpdateArticleLike(Article article);
+        public void Like(uint articleId);
 
         /// <summary>
         /// 更新文章已读数
         /// </summary>
         /// <param name="article">文章实体</param>
         /// <returns>更新结果</returns>
-        void UpdateArticleRead(Article article);
-
+        public void Read(uint articleId);
 
         /// <summary>
         /// 更新文章内容
@@ -60,7 +68,9 @@ namespace DotBlog.Server.Services
         /// <param name="articleOld">旧文章实体</param>
         /// <param name="article">新文章实体</param>
         /// <returns>更新结果</returns>
-        Article UpdateArticle(Article articleOld, Article article);
+        public Article UpdateArticle(Article articleOld, Article article);
+
+        #endregion
 
         // 写入相关
 
