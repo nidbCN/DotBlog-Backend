@@ -19,7 +19,6 @@ namespace DotBlog.Server.Services
                        throw new ArgumentNullException(nameof(context));
         }
 
-
         #region 获取相关
 
         public async Task<ICollection<Article>> GetArticlesAsync(int? limit)
@@ -120,14 +119,17 @@ namespace DotBlog.Server.Services
 
         #region 删除相关
 
-        public void DeleteArticle(Article article)
+        public void DeleteArticle(int articleId)
         {
-            // 判空
-            article = article
-                      ?? throw new ArgumentNullException(nameof(article));
+            var count = _context.Articles.Count();
 
-            // 删除文章
-            _context.Articles.Remove(article);
+            for (var i = 0; i < count; i++)
+            {
+                if (articleId == i)
+                {
+                    _context.Articles.RemoveRange();
+                }
+            }
         }
 
         public async Task<bool> SaveChangesAsync() =>
@@ -135,6 +137,11 @@ namespace DotBlog.Server.Services
 
         public bool SaveChanges() =>
             _context.SaveChanges() > 0;
+
+        public void DeleteArticle(Article article)
+        {
+            _context.Remove(article);
+        }
 
         #endregion
     }

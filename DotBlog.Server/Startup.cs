@@ -6,10 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-
 using DotBlog.Server.Data;
 using DotBlog.Server.Models;
 using DotBlog.Server.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace DotBlog.Server
@@ -21,18 +22,10 @@ namespace DotBlog.Server
             Configuration = configuration;
 
             var baseUrlConfig = Configuration["AppConfig:BaseUrl"];
-            if (string.IsNullOrWhiteSpace(baseUrlConfig))
-            {
-                _baseUrl = new Uri(string.Empty);
-            }
-            else if(!baseUrlConfig.StartsWith('/'))
-            {
-                _baseUrl = new Uri(baseUrlConfig);
-            }
-            else
-            {
-                _baseUrl = baseUrlConfig;
-            }
+            _baseUrl = 
+                string.IsNullOrWhiteSpace(baseUrlConfig) 
+                    ? new Uri(string.Empty) 
+                    : new Uri(baseUrlConfig);
 
         }
 
@@ -48,6 +41,9 @@ namespace DotBlog.Server
         // 服务注入配置
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+
             services.Configure<AppConfig>(
                 Configuration.GetSection("AppConfig")
             );
@@ -87,7 +83,7 @@ namespace DotBlog.Server
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.AddServer(new OpenApiServer{Url = _baseUrl});
+                c.AddServer(new OpenApiServer{Url = _baseUrl.AbsolutePath});
                 c.SwaggerDoc(ApiVersion, new OpenApiInfo { Title = "DotBlog Server  - Powered by .NET 5.0", Version = ApiVersion });
             });
 
@@ -127,10 +123,10 @@ namespace DotBlog.Server
 
             // 跨域
             app.UseCors("Open");
-            //// 身份验证
-            // app.UseAuthentication();
-            //// 授权
-            // app.UseAuthorization();
+            // 身份验证
+            app.UseAuthentication();
+            // 授权
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

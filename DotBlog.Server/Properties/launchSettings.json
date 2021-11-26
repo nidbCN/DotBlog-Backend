@@ -1,5 +1,11 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
+  "AzureAd": {
+    "Instance": "https://login.microsoftonline.com/",
+    "Domain": "qualified.domain.name",
+    "ClientId": "434dca4b-c3be-43bd-9ef6-bd17a760d97a",
+    "TenantId": "306b8306-f256-4694-bcbc-898e4d31964b"
+  },
   "profiles": {
     "DotBlog.Server": {
       "commandName": "Project",

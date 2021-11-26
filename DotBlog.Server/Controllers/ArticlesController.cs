@@ -2,13 +2,14 @@
 using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Services;
-using DotBlog.Shared.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using DotBlog.Shared;
+using DotBlog.Shared.Dto;
 
 namespace DotBlog.Server.Controllers
 {
@@ -253,6 +254,8 @@ namespace DotBlog.Server.Controllers
         public async Task<IActionResult> DeleteArticle([FromRoute] uint articleId)
         {
             _logger.LogInformation($"Match method {nameof(DeleteArticle)}.");
+
+
 
             // 获取文章
             var article = await _articleService.GetArticleAsync(articleId);
