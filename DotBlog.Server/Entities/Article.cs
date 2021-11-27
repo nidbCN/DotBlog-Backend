@@ -15,17 +15,17 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 文章别名
         /// </summary>
-        public string Alias { get; set; }
+        public string? Alias { get; set; }
 
         /// <summary>
         /// 文章标题
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; set; } = "未命名";
 
         /// <summary>
         /// 文章简介
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// 是否展示在首页上
@@ -45,7 +45,7 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 分类
         /// </summary>
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// 发布时间
@@ -55,17 +55,17 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 作者
         /// </summary>
-        public string Author { get; set; }
+        public string Author { get; set; } = "匿名";
 
         /// <summary>
         /// 文章内容
         /// </summary>
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         /// <summary>
         /// 回复
         /// </summary>
-        public ICollection<Reply> Replies { get; set; }
+        public IList<Reply>? Replies { get; set; }
 
         // /// <summary>
         // /// List[string]: 标签

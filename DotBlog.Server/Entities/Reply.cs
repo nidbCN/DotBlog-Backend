@@ -5,20 +5,25 @@ namespace DotBlog.Server.Entities
 {
     public class Reply
     {
+
+#nullable disable
         public Article Article { get; set; }
+#nullable restore
+
         /// <summary>
         /// 用户平台
         /// </summary>
-        public string UserPlatform { get; set; }
+        public string? UserPlatform { get; set; }
+        
         /// <summary>
         /// 用户浏览器
         /// </summary>
-        public string UserExplore { get; set; }
+        public string? UserExplore { get; set; }
 
         /// <summary>
         /// 头像网址
         /// </summary>
-        public string AvatarUrl { get; set; }
+        public string? AvatarUrl { get; set; }
 
         /// <summary>
         /// 评论的文章ID
@@ -45,22 +50,22 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 评论者
         /// </summary>
-        public string Author { get; set; }
+        public string Author { get; set; } = "匿名";
 
         /// <summary>
         /// 评论内容
         /// </summary>
-        public string Content { get; set; }
+        public string Content { get; set; } = string.Empty;
 
         /// <summary>
         /// 链接
         /// </summary>
-        public string Link { get; set; }
+        public string? Link { get; set; }
 
         /// <summary>
         /// 邮箱
         /// </summary>
-        public string Mail { get; set; }
+        public string? Mail { get; set; }
 
         /// <summary>
         /// 评论时间
