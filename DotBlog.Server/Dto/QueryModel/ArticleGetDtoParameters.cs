@@ -6,7 +6,7 @@
 
         #region 私有字段
 
-        private uint size;
+        private uint size = 5;
         #endregion
 
         #region 公有属性
@@ -14,12 +14,12 @@
         /// <summary>
         /// 分类
         /// </summary>
-        public string Category { get; set; }
+        public string? Category { get; set; }
 
         /// <summary>
         /// 页码
         /// </summary>
-        public uint Page { get; set; }
+        public uint Page { get; set; } = 1;
 
         /// <summary>
         /// 页含量
