@@ -1,11 +1,9 @@
-﻿using DotBlog.Server.Data;
+﻿using DotBlog.Server.Dto.QueryModel;
 using DotBlog.Server.Entities;
 using DotBlog.Server.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -13,45 +11,45 @@ namespace DotBlog.Server.Services
 {
     public class ArticlesService : IArticlesService
     {
-        private readonly DotBlogDbContext _context;
-        private readonly ILogger<ArticlesService> _logger;
-        private readonly IArticlesRepository _repository;
+        #region 私有字段
+        /// <summary>
+        /// 文章存储服务
+        /// </summary>
+        private readonly IArticlesRepository _articlesRepository;
 
-        public ArticlesService(DotBlogDbContext context, ILogger<ArticlesService> logger, IArticlesRepository repository)
+        /// <summary>
+        /// 日志服务
+        /// </summary>
+        private readonly ILogger<ArticlesService> _logger;
+        #endregion
+
+        #region 构造函数
+        public ArticlesService(IArticlesRepository articlesRepository, ILogger<ArticlesService> logger)
         {
-            _context = context;
+            _articlesRepository = articlesRepository;
             _logger = logger;
-            _repository = repository;
         }
+        #endregion
 
         #region 获取相关
 
-        public async Task<IList<Article>> GetAllAsync(int? limit)
-        {
-            if (limit.HasValue)
-                return await _repository.GetAsync(0, limit.Value);
+        public async Task<IList<Article>> GetAllAsync()
+            => await _articlesRepository.GetAllAsync();
 
-            return await _repository.GetAllAsync();
+        public async Task<IList<Article>> GetAllAsync(ArticleGetDtoParameters param)
+        {
+            if (param is null)
+                return await GetAllAsync();
+
+            bool match(Article x) => x.Category == param.Category;
+
+            return await _articlesRepository.FindAllAsync(match,(int)param.Page,(int)param.Size);
         }
 
-        public async Task<IList<Article>> GetByCategory(int? limit, string category)
-        {
-            if (limit.HasValue)
-                return await _repository.FindAllAsync(x => x.Category == category, limit.Value);
-
-            return await _repository.FindAllAsync(x => x.Category == category);
-        }
-
-        public async Task<Article> GetAsync(uint articleId) =>
-            await _context.Articles
-                .FirstOrDefaultAsync(it => it.ArticleId == articleId);
-
-        public Article GetArticle(uint articleId) =>
-            _context.Articles
-                .FirstOrDefault(it => it.ArticleId == articleId);
+        public async Task<Article> GetAsync(uint articleId)
+            => await _articlesRepository.GetAsync((int)articleId);
 
         #endregion
-
 
         #region 更新相关
 
@@ -75,69 +73,43 @@ namespace DotBlog.Server.Services
             article.Read++;
         }
 
-        public Article UpdateArticle(Article articleOld, Article article)
-        {
-
-            // 判空
-            articleOld = articleOld
-                         ?? throw new ArgumentNullException(nameof(articleOld));
-            _ = article
-                      ?? throw new ArgumentNullException(nameof(article));
-
-            // 更新文章内容
-            // EF 自动追踪，不需要
-
-            // 返回结果
-            return articleOld;
-        }
-
         #endregion
-
 
         #region 写入相关
 
-        public Article PostArticle(Article article)
+        public Article Add(Article article)
         {
             // 判空
-            article = article
-                      ?? throw new ArgumentNullException(nameof(article));
+            if (article is null)
+                throw new ArgumentNullException(nameof(article));
 
-            // 赋值给article
-            article.PostTime = DateTime.Now;
             // 添加文章
-            _context.Articles.Add(article);
+            _articlesRepository.Add(article);
             // 返回结果
             return article;
         }
 
         #endregion
 
-
         #region 删除相关
 
-        public void DeleteArticle(int articleId)
+        public void Remove(Article article)
         {
-            var count = _context.Articles.Count();
+            if (article is null)
+                throw new ArgumentNullException(nameof(article));
 
-            for (var i = 0; i < count; i++)
-            {
-                if (articleId == i)
-                {
-                    _context.Articles.RemoveRange();
-                }
-            }
+            _articlesRepository.Remove(article);
         }
 
-        public async Task<bool> SaveChangesAsync() =>
-            await _context.SaveChangesAsync() > 0;
+        #endregion
 
-        public bool SaveChanges() =>
-            _context.SaveChanges() > 0;
+        #region 保存相关
 
-        public void DeleteArticle(Article article)
-        {
-            _context.Remove(article);
-        }
+        public async Task SaveAsync() =>
+            await _articlesRepository.SaveAsync();
+
+        public void Save() =>
+            _articlesRepository.Save();
 
         #endregion
     }
