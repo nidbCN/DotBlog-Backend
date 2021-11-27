@@ -34,24 +34,22 @@ namespace DotBlog.Server.Repositories
         #region 公有方法
 
         #region 获取相关
-        public async Task<IList<Article>> GetByPageAsync(int offset, int count)
-            => await _dbContext.Articles.Skip(offset).Take(count).ToListAsync();
-
-        public async Task<IList<Article>> GetAllAsync()
-            => await _dbContext.Articles.ToListAsync();
 
         public async Task<Article> GetAsync(int id)
             => await _dbContext.Articles.FirstOrDefaultAsync(x => x.ArticleId == id);
 
-        public async Task<IList<Article>> FindAllAsync(Predicate<Article> match, int? count = null)
+        public async Task<IList<Article>> GetAllAsync()
+            => await _dbContext.Articles.ToListAsync();
+
+        public async Task<IList<Article>> FindAllAsync(Predicate<Article> match, int page = 1, int? size = null)
         {
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
             var query = _dbContext.Articles.Where(x => match(x));
 
-            if (count.HasValue)
-                query = query.Take(count.Value);
+            if (size.HasValue)
+                query = query.Skip(size.Value * (page - 1)).Take(size.Value);
 
             return await query.ToListAsync();
         }

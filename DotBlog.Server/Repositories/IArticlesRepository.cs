@@ -10,20 +10,6 @@ namespace DotBlog.Server.Repositories
         #region 获取相关
 
         /// <summary>
-        /// 获取所有文章
-        /// </summary>
-        /// <returns>文章列表</returns>
-        public Task<IList<Article>> GetAllAsync();
-
-        /// <summary>
-        /// 获取文章列表
-        /// </summary>
-        /// <param name="offset">分页偏移</param>
-        /// <param name="count">数据总数</param>
-        /// <returns>文章列表</returns>
-        public Task<IList<Article>> GetByPageAsync(int offset, int count);
-
-        /// <summary>
         /// 获取文章
         /// </summary>
         /// <param name="id">文章id</param>
@@ -31,12 +17,19 @@ namespace DotBlog.Server.Repositories
         public Task<Article> GetAsync(int id);
 
         /// <summary>
-        /// 查找所有文章
+        /// 获取所有文章
+        /// </summary>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> GetAllAsync();
+
+        /// <summary>
+        /// 查找文章
         /// </summary>
         /// <param name="match">表达式</param>
-        /// <param name="count">数量</param>
-        /// <returns></returns>
-        public Task<IList<Article>> FindAllAsync(Predicate<Article> match, int? count = null);
+        /// <param name="page">页码</param>
+        /// <param name="size">页容量</param>
+        /// <returns>文章列表</returns>
+        public Task<IList<Article>> FindAllAsync(Predicate<Article> match, int page = 1, int? size = null);
 
         #endregion
 
