@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DotBlog.Server.Data
 {
-    public class DotBlogDbContext : DbContext
+    public class BlogDbContext : DbContext
     {
 #nullable disable
 
-        public DotBlogDbContext(DbContextOptions<DotBlogDbContext> options) : base(options)
+        public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
         {
             // 构造函数，将options传给父类的构造函数
         }
@@ -22,17 +22,12 @@ namespace DotBlog.Server.Data
         /// </summary>
         public DbSet<Reply> Replies { get; set; }
 
-        /// <summary>
-        /// 账户表
-        /// </summary>
-        public DbSet<Account> Accounts { get; set; }
 
         // 重写父类方法设置数据库
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var articleConf = modelBuilder.Entity<Article>();
             var replyConf = modelBuilder.Entity<Reply>();
-            var accountConf = modelBuilder.Entity<Account>();
 
             // 设置关系
             replyConf
@@ -50,11 +45,6 @@ namespace DotBlog.Server.Data
             articleConf.Property(it => it.ArticleId).IsRequired();
             articleConf.HasKey(it => it.ArticleId);
             articleConf.HasIndex(it => it.ArticleId);
-
-            accountConf.HasKey(it => it.UserId);
-            accountConf.HasIndex(it => it.Name);
-            accountConf.HasIndex(it => it.Name);
-            accountConf.HasIndex(it => it.Phone);
 
             articleConf.HasData(
                 new Article()

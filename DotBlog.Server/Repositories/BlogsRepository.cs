@@ -9,39 +9,42 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Repositories
 {
-    public class ArticlesRepository : IArticlesRepository
+    public class BlogsRepository : IBlogsRepository
     {
         #region 私有字段
         /// <summary>
         /// 数据库上下文
         /// </summary>
-        private readonly DotBlogDbContext _dbContext;
+        private readonly BlogDbContext _dbContext;
 
         /// <summary>
         /// 日志服务
         /// </summary>
-        private readonly ILogger<ArticlesRepository> _logger;
+        private readonly ILogger<BlogsRepository> _logger;
         #endregion
 
         #region 构造函数
-        public ArticlesRepository(DotBlogDbContext dbContext, ILogger<ArticlesRepository> logger)
+        public BlogsRepository(BlogDbContext dbContext, ILogger<BlogsRepository> logger)
         {
-            _dbContext = dbContext;
+            _dbContext = dbContext
+                         ?? throw new ArgumentNullException(nameof(dbContext));
             _logger = logger;
         }
         #endregion
 
         #region 公有方法
 
+        #region 文章相关
+
         #region 获取相关
 
-        public async Task<Article> GetAsync(int id)
+        public async Task<Article?> GetArticleAsync(int id)
             => await _dbContext.Articles.FirstOrDefaultAsync(x => x.ArticleId == id);
 
-        public async Task<IList<Article>> GetAllAsync()
+        public async Task<IList<Article>> GetAllArticlesAsync()
             => await _dbContext.Articles.ToListAsync();
 
-        public async Task<IList<Article>> FindAllAsync(Predicate<Article> match, int page = 1, int? size = null)
+        public async Task<IList<Article>> GetMatchedArticlesAsync(Predicate<Article> match, int page = 1, int? size = null)
         {
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
@@ -56,7 +59,7 @@ namespace DotBlog.Server.Repositories
         #endregion
 
         #region 删除相关
-        public void Remove(Article article)
+        public void RemoveArticle(Article article)
         {
             if (article is null)
                 throw new ArgumentNullException(nameof(article));
@@ -64,12 +67,12 @@ namespace DotBlog.Server.Repositories
             _dbContext.Articles.Remove(article);
         }
 
-        public void RemoveAll(Predicate<Article> match)
+        public void RemoveMatchedArticles(Predicate<Article> match)
         {
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            var searchResult = FindAllAsync(match).Result;
+            var searchResult = GetMatchedArticlesAsync(match).Result;
             foreach (var article in searchResult)
             {
                 _dbContext.Articles.Remove(article);
@@ -80,13 +83,21 @@ namespace DotBlog.Server.Repositories
         #endregion
 
         #region 新建相关
-        public void Add(Article article)
+        public void AddArticle(Article article)
         {
             if (article is null)
                 throw new ArgumentNullException(nameof(article));
 
             _dbContext.Articles.Add(article);
         }
+
+        #endregion
+
+        #endregion
+
+        #region 回复相关
+
+
 
         #endregion
 

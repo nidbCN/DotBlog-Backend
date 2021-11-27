@@ -16,7 +16,7 @@ var config = builder.Configuration.GetSection(nameof(AppConfig));
 builder.Services.Configure<AppConfig>(config);
 
 // 添加数据库上下文
-builder.Services.AddDbContext<DotBlogDbContext>(
+builder.Services.AddDbContext<BlogDbContext>(
     options =>
     {
         var connStr = builder.Configuration.GetConnectionString("postgresql");

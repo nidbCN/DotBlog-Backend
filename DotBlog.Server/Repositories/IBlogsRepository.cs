@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Repositories
 {
-    public interface IArticlesRepository
+    public interface IBlogsRepository
     {
+        #region 文章相关
+
         #region 获取相关
 
         /// <summary>
@@ -14,13 +16,13 @@ namespace DotBlog.Server.Repositories
         /// </summary>
         /// <param name="id">文章id</param>
         /// <returns>文章</returns>
-        public Task<Article> GetAsync(int id);
+        public Task<Article?> GetArticleAsync(int id);
 
         /// <summary>
         /// 获取所有文章
         /// </summary>
         /// <returns>文章列表</returns>
-        public Task<IList<Article>> GetAllAsync();
+        public Task<IList<Article>> GetAllArticlesAsync();
 
         /// <summary>
         /// 查找文章
@@ -29,7 +31,7 @@ namespace DotBlog.Server.Repositories
         /// <param name="page">页码</param>
         /// <param name="size">页容量</param>
         /// <returns>文章列表</returns>
-        public Task<IList<Article>> FindAllAsync(Predicate<Article> match, int page = 1, int? size = null);
+        public Task<IList<Article>> GetMatchedArticlesAsync(Predicate<Article> match, int page = 1, int? size = null);
 
         #endregion
 
@@ -38,17 +40,29 @@ namespace DotBlog.Server.Repositories
         /// 删除文章
         /// </summary>
         /// <param name="id">文章id</param>
-        public void Remove(Article article);
+        public void RemoveArticle(Article article);
 
         /// <summary>
-        /// 删除文章
+        /// 删除符合条件的文章
         /// </summary>
         /// <param name="match">表达式</param>
-        public void RemoveAll(Predicate<Article> match);
+        public void RemoveMatchedArticles(Predicate<Article> match);
         #endregion
 
         #region 新建相关
-        public void Add(Article article);
+        public void AddArticle(Article article);
+        #endregion
+
+        #endregion
+
+        #region 回复相关
+
+        public Task<Reply?> GetReplyAsync(int articleId, int replyId);
+
+        public Task<IList<Reply>> GetAllRepliesAsync(int articleId);
+
+        public void RemoveReply(int articleId, Reply reply);
+
         #endregion
 
         #region 保存相关
