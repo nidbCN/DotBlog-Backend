@@ -10,7 +10,6 @@ namespace DotBlog.Server.Dto
         private string _category;
         private string _description;
         private string _title;
-
         private string _content;
 
         /// <summary>
