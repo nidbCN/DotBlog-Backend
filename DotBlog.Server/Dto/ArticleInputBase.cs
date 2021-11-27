@@ -6,11 +6,11 @@ namespace DotBlog.Server.Dto
 {
     public abstract class ArticleInputBase : ArticleBase
     {
-        private string _author;
-        private string _category;
-        private string _description;
-        private string _title;
-        private string _content;
+        private string _author = "匿名";
+        private string? _category;
+        private string? _description;
+        private string _title = "未命名";
+        private string _content = string.Empty;
 
         /// <summary>
         /// 是否展示在首页上
@@ -36,13 +36,13 @@ namespace DotBlog.Server.Dto
             set => _author = value.HtmlSantinizerStandard();
         }
 
-        public override string Category
+        public override string? Category
         {
             get => _category;
             set => _category = value.HtmlSantinizerStandard();
         }
 
-        public override string Description
+        public override string? Description
         {
             get => _description;
             set => _description = value.HtmlSantinizerStandard();

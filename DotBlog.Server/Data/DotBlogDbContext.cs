@@ -5,6 +5,8 @@ namespace DotBlog.Server.Data
 {
     public class DotBlogDbContext : DbContext
     {
+#nullable disable
+
         public DotBlogDbContext(DbContextOptions<DotBlogDbContext> options) : base(options)
         {
             // 构造函数，将options传给父类的构造函数
@@ -67,5 +69,6 @@ namespace DotBlog.Server.Data
                 }
             );
         }
+#nullable restore
     }
 }

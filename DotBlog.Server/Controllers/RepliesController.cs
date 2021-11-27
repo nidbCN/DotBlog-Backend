@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Controllers
 {
-    [Route(Startup.ApiVersion + "/Articles/{articleId}/[controller]")]
+    [Route("v1/Articles/{articleId}/[controller]")]
     [ApiController]
     public class RepliesController : ControllerBase
     {
@@ -149,8 +149,6 @@ namespace DotBlog.Server.Controllers
                 return NotFound();
             }
 
-            _logger.LogDebug("Get input data:\n" + JsonSerializer.Serialize(inputReply, _printOptions));
-
             // Dto映射为实体
             var reply = _mapper.Map<Reply>(inputReply);
 
@@ -169,7 +167,7 @@ namespace DotBlog.Server.Controllers
 
             // 返回结果
             var returnDto = _mapper.Map<ReplyContentDto>(result);
-            return Created($"{Startup.ApiVersion}/articles/{articleId}/replies/{returnDto.ReplyId}",returnDto);
+            return Created($"v1/articles/{articleId}/replies/{returnDto.ReplyId}",returnDto);
         }
 
         /// <summary>

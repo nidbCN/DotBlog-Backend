@@ -2,6 +2,7 @@
 using DotBlog.Server.Dto;
 using DotBlog.Server.Entities;
 using DotBlog.Shared.Dto;
+using System;
 
 namespace DotBlog.Server.Profiles
 {
@@ -9,22 +10,25 @@ namespace DotBlog.Server.Profiles
     {
         public ArticleProfile()
         {
-            const string formatterStr = "yyyy-M-d HH:mm:ss";
-            // 从文章实体到输出Dto的映射
+            #region 从实体到Dto的映射
             CreateMap<Article, ArticleContentDto>()
-                .ForMember(dest=>dest.PostTime,
-                    opt=>
-                        opt.MapFrom(src=>src.PostTime.ToString(formatterStr))
+                .ForMember(dest => dest.PostTime,
+                    opt => opt.MapFrom(src => src.PostTime.ToString())
                 );
             CreateMap<Article, ArticleListDto>()
-                .ForMember(dest=>dest.PostTime,
-                    opt =>
-                        opt.MapFrom(src=>src.PostTime.ToString(formatterStr))
+                .ForMember(dest => dest.PostTime,
+                    opt => opt.MapFrom(src => src.PostTime.ToString())
                 );
+            CreateMap<Article, ArticleUpdateDto>();
+            #endregion
 
-            // 从输入Dto到文章实体的映射
+            #region 从Dto到实体的映射
             CreateMap<ArticleUpdateDto, Article>();
-            CreateMap<ArticleAddDto, Article>();
+            CreateMap<ArticleAddDto, Article>()
+                .ForMember(dest => dest.PostTime,
+                    opt => opt.MapFrom(src => DateTime.Now.ToString())
+                );
+            #endregion
         }
     }
 }
