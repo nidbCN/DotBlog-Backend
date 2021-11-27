@@ -12,8 +12,14 @@ namespace DotBlog.Server.Repositories
     public class ArticlesRepository : IArticlesRepository
     {
         #region 私有字段
+        /// <summary>
+        /// 数据库上下文
+        /// </summary>
         private readonly DotBlogDbContext _dbContext;
 
+        /// <summary>
+        /// 日志服务
+        /// </summary>
         private readonly ILogger<ArticlesRepository> _logger;
         #endregion
 
@@ -24,6 +30,8 @@ namespace DotBlog.Server.Repositories
             _logger = logger;
         }
         #endregion
+
+        #region 公有方法
 
         #region 获取相关
         public async Task<IList<Article>> GetByPageAsync(int offset, int count)
@@ -90,6 +98,8 @@ namespace DotBlog.Server.Repositories
 
         public async Task SaveAsync()
             => await _dbContext.SaveChangesAsync();
+
+        #endregion
 
         #endregion
     }
