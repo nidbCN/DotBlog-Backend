@@ -1,59 +1,96 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DotBlog.Server.Data;
+using DotBlog.Server.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DotBlog.Server.Data;
-using DotBlog.Server.Entities;
 
 namespace DotBlog.Server.Repositories
 {
     public class ArticlesRepository : IArticlesRepository
     {
         #region 私有字段
-        private readonly DotBlogDbContext _context;
+        private readonly DotBlogDbContext _dbContext;
 
         private readonly ILogger<ArticlesRepository> _logger;
         #endregion
 
         #region 构造函数
-        public ArticlesRepository(DotBlogDbContext context, ILogger<ArticlesRepository> logger)
+        public ArticlesRepository(DotBlogDbContext dbContext, ILogger<ArticlesRepository> logger)
         {
-            _context = context;
+            _dbContext = dbContext;
             _logger = logger;
         }
         #endregion
 
-        #region 公共方法
-        public async Task<IList<Article>> FindAllAsync(Predicate<Article> match)
-            => await _context.Articles.Where(x => match(x)).ToListAsync();
-
-        public async Task<Article> FindAsync(int id)
-            => await _context.Articles.FirstOrDefaultAsync(x => x.ArticleId == id);
+        #region 获取相关
+        public async Task<IList<Article>> GetByPageAsync(int offset, int count)
+            => await _dbContext.Articles.Skip(offset).Take(count).ToListAsync();
 
         public async Task<IList<Article>> GetAllAsync()
-            => await _context.Articles.ToListAsync();
+            => await _dbContext.Articles.ToListAsync();
 
-        public async Task<IList<Article>> GetAsync(int offset, int count)
-            => await _context.Articles.Skip(offset).Take(count).ToListAsync();
+        public async Task<Article> GetAsync(int id)
+            => await _dbContext.Articles.FirstOrDefaultAsync(x => x.ArticleId == id);
 
+        public async Task<IList<Article>> FindAllAsync(Predicate<Article> match, int? count = null)
+        {
+            if (match is null)
+                throw new ArgumentNullException(nameof(match));
+
+            var query = _dbContext.Articles.Where(x => match(x));
+
+            if (count.HasValue)
+                query = query.Take(count.Value);
+
+            return await query.ToListAsync();
+        }
+        #endregion
+
+        #region 删除相关
         public void Remove(Article article)
-            => _context.Articles.Remove(article);
+        {
+            if (article is null)
+                throw new ArgumentNullException(nameof(article));
+
+            _dbContext.Articles.Remove(article);
+        }
 
         public void RemoveAll(Predicate<Article> match)
         {
+            if (match is null)
+                throw new ArgumentNullException(nameof(match));
+
             var searchResult = FindAllAsync(match).Result;
             foreach (var article in searchResult)
             {
-                _context.Articles.Remove(article);
+                _dbContext.Articles.Remove(article);
             }
 
-            _context.SaveChanges();
+            _dbContext.SaveChanges();
+        }
+        #endregion
+
+        #region 新建相关
+        public void Add(Article article)
+        {
+            if (article is null)
+                throw new ArgumentNullException(nameof(article));
+
+            _dbContext.Articles.Add(article);
         }
 
-        public void RemoveAt(int id)
-            => RemoveAll(x => x.ArticleId == id);
+        #endregion
+
+        #region 保存相关
+        public void Save()
+            => _dbContext.SaveChanges();
+
+        public async Task SaveAsync()
+            => await _dbContext.SaveChangesAsync();
+
         #endregion
     }
 }
