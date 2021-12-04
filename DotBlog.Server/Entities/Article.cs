@@ -65,7 +65,7 @@ namespace DotBlog.Server.Entities
         /// <summary>
         /// 回复
         /// </summary>
-        public IList<Reply>? Replies { get; set; }
+        public IList<Reply> Replies { get; set; } = new List<Reply>();
 
         // /// <summary>
         // /// List[string]: 标签

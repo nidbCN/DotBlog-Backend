@@ -26,7 +26,7 @@ namespace DotBlog.Server.Controllers
         /// <summary>
         /// 回复操作服务
         /// </summary>
-        private readonly IReplyService _replyService;
+        private readonly IRepliesService _replyService;
 
         /// <summary>
         /// 日志记录服务
@@ -42,7 +42,7 @@ namespace DotBlog.Server.Controllers
         private readonly JsonSerializerOptions _printOptions = new() { WriteIndented = true };
 
         // 构造函数
-        public RepliesController(IArticlesService articleService, IReplyService replyService, ILogger<RepliesController> logger, IMapper mapper)
+        public RepliesController(IArticlesService articleService, IRepliesService replyService, ILogger<RepliesController> logger, IMapper mapper)
         {
             _articleService = articleService ??
                               throw new ArgumentNullException(nameof(articleService));
@@ -105,7 +105,7 @@ namespace DotBlog.Server.Controllers
             }
 
             // 获取回复
-            var reply = await _replyService.GetReplyAsync(article, replyId);
+            var reply = await _replyService.GetAsync(article, replyId);
 
             // 判断是否找到回复
             // ReSharper disable once InvertIf
@@ -153,7 +153,7 @@ namespace DotBlog.Server.Controllers
             var reply = _mapper.Map<Reply>(inputReply);
 
             // 回复文章
-            var result = _replyService.PostReply(article, reply);
+            var result = _replyService.Add(article, reply);
 
             if (result == null)
             {
@@ -192,7 +192,7 @@ namespace DotBlog.Server.Controllers
                 return NotFound();
             }
 
-            var replyItem = await _replyService.GetReplyAsync(article, replyId);
+            var replyItem = await _replyService.GetAsync(article, replyId);
 
             // 判断是否找到回复
             // ReSharper disable once InvertIf
