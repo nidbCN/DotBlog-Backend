@@ -30,7 +30,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // 添加文章、回复服务
 builder.Services.AddScoped<IArticlesService, ArticlesService>();
-builder.Services.AddScoped<IReplyService, ReplyService>();
+builder.Services.AddScoped<IRepliesService, RepliesService>();
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();
