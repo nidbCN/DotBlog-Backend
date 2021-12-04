@@ -46,11 +46,11 @@ namespace DotBlog.Server.Controllers
         {
             _articleService = articleService ??
                               throw new ArgumentNullException(nameof(articleService));
-            _replyService = replyService ?? 
+            _replyService = replyService ??
                             throw new ArgumentNullException(nameof(replyService));
-            _logger = logger ?? 
+            _logger = logger ??
                       throw new ArgumentNullException(nameof(logger));
-            _mapper = mapper ?? 
+            _mapper = mapper ??
                       throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -62,24 +62,14 @@ namespace DotBlog.Server.Controllers
         [HttpGet(Name = nameof(GetReplies))]
         public async Task<ActionResult<ICollection<ReplyContentDto>>> GetReplies([FromRoute] uint articleId)
         {
-            _logger.LogInformation($"Match method {nameof(GetReplies)}.");
+            var replyList = await _replyService.GetAllAsync(articleId);
 
-            // 获取文章
-            var article = await _articleService.GetAsync(articleId);
-
-            // 判断是否找到文章
-            if (article == null)
-            {
-                _logger.LogInformation("No article was found, return a NotFound.");
+            if (replyList is null)
                 return NotFound();
-            }
-
-            // 获取回复
-            var replies = await _replyService.GetRepliesAsync(article);
 
             // 返回评论Dto结果
             return Ok(
-                _mapper.Map<ICollection<ReplyContentDto>>(replies)
+                _mapper.Map<ICollection<ReplyContentDto>>(replyList)
             );
         }
 
@@ -92,37 +82,17 @@ namespace DotBlog.Server.Controllers
         [HttpPost("{replyId}/Like")]
         public async Task<IActionResult> UpdateReplyLike([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            _logger.LogInformation($"Match method {nameof(UpdateReplyLike)}.");
-
-            // 获取文章
-            var article = await _articleService.GetAsync(articleId);
-
-            // 判断是否找到文章
-            if (article == null)
-            {
-                _logger.LogInformation("No article was found, return a NotFound.");
-                return NotFound();
-            }
-
             // 获取回复
-            var reply = await _replyService.GetAsync(article, replyId);
+            var reply = await _replyService.GetAsync(articleId, replyId);
 
             // 判断是否找到回复
-            // ReSharper disable once InvertIf
-            if (reply == null)
+            if (reply is null)
             {
-                _logger.LogInformation("No reply was found, return a NotFound.");
                 return NotFound();
             }
 
             // 更新回复点赞
-            _replyService.UpdateReplyLike(reply);
-
-            // ReSharper disable once InvertIf
-            if (!await _replyService.SaveChangesAsync())
-            {
-                _logger.LogError("Cannot save changes, UnKnow error.");
-            }
+            _replyService.Like(reply);
 
             // 返回结果
             return NoContent();
@@ -160,14 +130,9 @@ namespace DotBlog.Server.Controllers
                 return Accepted();
             }
 
-            if (!await _replyService.SaveChangesAsync())
-            {
-                _logger.LogError("Cannot save changes, UnKnow error.");
-            }
-
             // 返回结果
             var returnDto = _mapper.Map<ReplyContentDto>(result);
-            return Created($"v1/articles/{articleId}/replies/{returnDto.ReplyId}",returnDto);
+            return Created($"v1/articles/{articleId}/replies/{returnDto.ReplyId}", returnDto);
         }
 
         /// <summary>
@@ -180,35 +145,13 @@ namespace DotBlog.Server.Controllers
         [HttpDelete("{replyId}")]
         public async Task<IActionResult> DeleteReply([FromRoute] uint articleId, [FromRoute] uint replyId)
         {
-            _logger.LogInformation($"Match method {nameof(DeleteReply)}.");
-
-            // 获取文章
-            var article = await _articleService.GetAsync(articleId);
-
-            // 判断是否找到文章
-            if (article == null)
-            {
-                _logger.LogInformation("No article was found, return a NotFound.");
-                return NotFound();
-            }
-
-            var replyItem = await _replyService.GetAsync(article, replyId);
+            var reply = await _replyService.GetAsync(articleId, replyId);
 
             // 判断是否找到回复
-            // ReSharper disable once InvertIf
-            if (replyItem == null)
-            {
-                _logger.LogInformation("No article was found, return a NotFound.");
+            if (reply is null)
                 return NotFound();
-            }
 
-            _replyService.DeleteReply(replyItem);
-
-            // ReSharper disable once InvertIf
-            if (!await _replyService.SaveChangesAsync())
-            {
-                _logger.LogError("Cannot save changes, UnKnow error.");
-            }
+            _replyService.Delete(reply);
 
             return NoContent();
 

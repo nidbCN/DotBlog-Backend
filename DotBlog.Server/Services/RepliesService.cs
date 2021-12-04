@@ -1,12 +1,8 @@
-﻿using DotBlog.Server.Data;
-using DotBlog.Server.Entities;
+﻿using DotBlog.Server.Entities;
 using DotBlog.Server.Repositories;
-using Masuit.Tools;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace DotBlog.Server.Services
@@ -45,7 +41,7 @@ namespace DotBlog.Server.Services
 
         #region 更新相关
 
-        public void Like(Reply reply)
+        public async void Like(Reply reply)
         {
             // 判空
             if (reply is null)
@@ -53,6 +49,8 @@ namespace DotBlog.Server.Services
 
             // 自增
             reply.Like++;
+
+            await _blogsRepository.SaveAsync();
         }
 
         #endregion
@@ -72,6 +70,8 @@ namespace DotBlog.Server.Services
             reply.ArticleId = article.ArticleId;
 
             _blogsRepository.AddReply(reply);
+
+            _blogsRepository.Save();
             return reply;
         }
 
