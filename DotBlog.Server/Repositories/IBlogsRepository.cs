@@ -57,11 +57,41 @@ namespace DotBlog.Server.Repositories
 
         #region 回复相关
 
+        #region 获取相关
+
+        /// <summary>
+        /// 获取回复
+        /// </summary>
+        /// <param name="articleId">文章id</param>
+        /// <param name="replyId">回复id</param>
+        /// <returns>回复实体</returns>
         public Task<Reply?> GetReplyAsync(int articleId, int replyId);
 
-        public Task<IList<Reply>> GetAllRepliesAsync(int articleId);
+        /// <summary>
+        /// 获取回复列表
+        /// </summary>
+        /// <param name="articleId">文章id</param>
+        /// <returns></returns>
+        public Task<IList<Reply>?> GetAllRepliesAsync(int articleId);
 
-        public void RemoveReply(int articleId, Reply reply);
+        #endregion
+
+        #region 删除相关
+
+        /// <summary>
+        /// 删除回复
+        /// </summary>
+        /// <param name="articleId">文章id</param>
+        /// <param name="reply"> </param>
+        public void RemoveReply(Reply reply);
+
+        #endregion
+
+        #region 新建相关
+
+        public void AddReply(Reply reply);
+
+        #endregion
 
         #endregion
 

@@ -33,53 +33,49 @@ namespace DotBlog.Server.Services
 
         #region 公有方法
 
+        #region 获取相关
+
         public async Task<Reply?> GetAsync(uint articleId, uint replyId)
-        {
+            => await _blogsRepository.GetReplyAsync((int)articleId, (int)replyId);
 
-            await _blogsRepository.GetReplyAsync((int)articleId, (int)replyId);
-        }
+        public async Task<IList<Reply>?> GetAllAsync(uint articleId)
+            => await _blogsRepository.GetAllRepliesAsync((int)articleId);
 
-        //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
-        //{
+        #endregion
 
-        //}
-
-        // TODO(mail@gaein.cn): 科学的获取回复
-        public async Task<ICollection<Reply>> GetRepliesAsync(Article article)
-        {
-            // 判空
-            if (article == null) throw new ArgumentNullException(nameof(article));
-
-            return await _context.Replies
-                .Where(it => it.Article == article)
-                .ToListAsync();
-        }
+        #region 更新相关
 
         public void Like(Reply reply)
         {
             // 判空
-            if (reply == null) throw new ArgumentNullException(nameof(reply));
+            if (reply is null)
+                throw new ArgumentNullException(nameof(reply));
 
             // 自增
             reply.Like++;
         }
 
-        public Reply? Add(Article article, Reply reply)
+        #endregion
+
+        #region 新建相关
+
+        public Reply Add(Article article, Reply reply)
         {
-            // 判空
-            if (reply == null) throw new ArgumentNullException(nameof(reply));
+            if (article is null)
+                throw new ArgumentNullException(nameof(article));
+
+            if (reply is null)
+                throw new ArgumentNullException(nameof(reply));
 
             // 新建回复
+            reply.Article = article;
             reply.ArticleId = article.ArticleId;
 
-            if (!reply.Mail.MatchEmail().isMatch)
-            {
-                return null;
-            }
-
-            _context.Replies.Add(reply);
+            _blogsRepository.AddReply(reply);
             return reply;
         }
+
+        #endregion
 
         public void Delete(Reply reply)
         {
@@ -88,15 +84,8 @@ namespace DotBlog.Server.Services
                 throw new ArgumentNullException(nameof(reply));
 
             // 删除
-            _context.Replies.Remove(reply);
+            _blogsRepository.RemoveReply(reply);
         }
-
-
-        public async Task<bool> SaveChangesAsync() =>
-            await _context.SaveChangesAsync() > 0;
-
-        public bool SaveChanges() =>
-            _context.SaveChanges() > 0;
 
         #endregion
     }

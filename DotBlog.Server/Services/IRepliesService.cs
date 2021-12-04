@@ -13,7 +13,7 @@ namespace DotBlog.Server.Services
         /// </summary>
         /// <param name="articleId">文章实体</param>
         /// <returns>回复实体列表</returns>
-        public Task<IList<Reply>> GetAllAsync(uint articleId);
+        public Task<IList<Reply>?> GetAllAsync(uint articleId);
 
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace DotBlog.Server.Services
         /// <param name="article">文章实体</param>
         /// <param name="reply">新回复实体</param>
         /// <returns>更新的实体</returns>
-        public Reply Add(Reply reply);
+        public Reply Add(Article article, Reply reply);
 
         #endregion
 
@@ -57,22 +57,6 @@ namespace DotBlog.Server.Services
         /// <param name="reply">回复ID</param>
         /// <returns>删除结果</returns>
         public void Delete(Reply reply);
-
-        #endregion
-
-        #region 保存相关
-
-        /// <summary>
-        /// 保存更改
-        /// </summary>
-        /// <returns>保存结果</returns>
-        public Task SaveChangesAsync();
-
-        /// <summary>
-        /// 保存更改
-        /// </summary>
-        /// <returns>保存结果</returns>
-        void SaveChanges();
 
         #endregion
     }

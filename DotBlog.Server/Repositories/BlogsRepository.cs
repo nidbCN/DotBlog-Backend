@@ -97,7 +97,50 @@ namespace DotBlog.Server.Repositories
 
         #region 回复相关
 
+        #region 获取相关
 
+        public async Task<Reply?> GetReplyAsync(int articleId, int replyId)
+            => await _dbContext.Replies
+                .Where(x => x.ArticleId == articleId)
+                .FirstOrDefaultAsync(x => x.ReplyId == replyId);
+
+        public async Task<IList<Reply>?> GetAllRepliesAsync(int articleId)
+        {
+            if (!await _dbContext.Articles.AnyAsync(x => x.ArticleId == articleId))
+                return null;
+
+            return await _dbContext.Replies
+                   .Where(x => x.ArticleId == articleId)
+                   .ToListAsync();
+        }
+
+        #endregion
+
+
+
+        #region 删除相关
+
+        public void RemoveReply(Reply reply)
+        {
+            if (reply is null)
+                throw new ArgumentNullException(nameof(reply));
+
+            _dbContext.Replies.Remove(reply);
+        }
+
+        #endregion
+
+        #region
+
+        public void AddReply(Reply reply)
+        {
+            if (reply is null)
+                throw new ArgumentNullException(nameof(reply));
+
+            _dbContext.Replies.Add(reply);
+        }
+
+        #endregion
 
         #endregion
 
