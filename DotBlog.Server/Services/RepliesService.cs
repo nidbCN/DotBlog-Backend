@@ -1,7 +1,9 @@
 ﻿using DotBlog.Server.Data;
 using DotBlog.Server.Entities;
+using DotBlog.Server.Repositories;
 using Masuit.Tools;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +11,32 @@ using System.Threading.Tasks;
 
 namespace DotBlog.Server.Services
 {
-    public class ReplyService : IReplyService
+    public class RepliesService : IRepliesService
     {
-        private readonly DotBlogDbContext _context;
+        #region 私有字段
 
-        public ReplyService(DotBlogDbContext context)
+        private readonly IBlogsRepository _blogsRepository;
+
+        private readonly ILogger<RepliesService> _logger;
+
+        #endregion
+
+        #region 构造函数
+
+        public RepliesService(IBlogsRepository blogsRepository, ILogger<RepliesService> logger)
         {
-            _context = context ??
-                      throw new ArgumentNullException(nameof(context));
+            _blogsRepository = blogsRepository;
+            _logger = logger;
         }
 
-        public async Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
-        {
-            if (articleItem == null) throw new ArgumentNullException(nameof(articleItem));
+        #endregion
 
-            return await _context.Replies.FirstOrDefaultAsync(it => it.Article == articleItem);
+        #region 公有方法
+
+        public async Task<Reply?> GetAsync(uint articleId, uint replyId)
+        {
+
+            await _blogsRepository.GetReplyAsync((int)articleId, (int)replyId);
         }
 
         //Task<Reply> GetReplyAsync(Article articleItem, uint replyId)
@@ -37,12 +50,12 @@ namespace DotBlog.Server.Services
             // 判空
             if (article == null) throw new ArgumentNullException(nameof(article));
 
-            return await _context.Replies.Where(it => it.Article == article).ToListAsync();
-
-            // return articleItem.Replies;
+            return await _context.Replies
+                .Where(it => it.Article == article)
+                .ToListAsync();
         }
 
-        public void UpdateReplyLike(Reply reply)
+        public void Like(Reply reply)
         {
             // 判空
             if (reply == null) throw new ArgumentNullException(nameof(reply));
@@ -51,7 +64,7 @@ namespace DotBlog.Server.Services
             reply.Like++;
         }
 
-        public Reply PostReply(Article article, Reply reply)
+        public Reply? Add(Article article, Reply reply)
         {
             // 判空
             if (reply == null) throw new ArgumentNullException(nameof(reply));
@@ -68,10 +81,11 @@ namespace DotBlog.Server.Services
             return reply;
         }
 
-        public void DeleteReply(Reply reply)
+        public void Delete(Reply reply)
         {
             // 判空
-            if (reply == null) throw new ArgumentNullException(nameof(reply));
+            if (reply is null)
+                throw new ArgumentNullException(nameof(reply));
 
             // 删除
             _context.Replies.Remove(reply);
@@ -83,5 +97,7 @@ namespace DotBlog.Server.Services
 
         public bool SaveChanges() =>
             _context.SaveChanges() > 0;
+
+        #endregion
     }
 }
