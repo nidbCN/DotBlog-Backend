@@ -6,14 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using DotBlog.Server.Data;
-using DotBlog.Server.Models;
 using DotBlog.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var config = builder.Configuration.GetSection(nameof(AppConfig));
-
-builder.Services.Configure<AppConfig>(config);
 
 // 添加数据库上下文
 builder.Services.AddDbContext<BlogDbContext>(
