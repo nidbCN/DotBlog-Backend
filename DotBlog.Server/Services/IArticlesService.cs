@@ -27,7 +27,7 @@ namespace DotBlog.Server.Services
         /// </summary>
         /// <param name="articleId">文章ID</param>
         /// <returns>文章实例</returns>
-        public Task<Article> GetAsync(uint articleId);
+        public Task<Article?> GetAsync(uint articleId);
 
         #endregion
 

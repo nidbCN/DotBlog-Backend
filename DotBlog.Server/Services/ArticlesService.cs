@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
 namespace DotBlog.Server.Services
 {
     public class ArticlesService : IArticlesService
@@ -15,7 +14,7 @@ namespace DotBlog.Server.Services
         /// <summary>
         /// 文章存储服务
         /// </summary>
-        private readonly IArticlesRepository _articlesRepository;
+        private readonly IBlogsRepository _blogsRepository;
 
         /// <summary>
         /// 日志服务
@@ -24,9 +23,9 @@ namespace DotBlog.Server.Services
         #endregion
 
         #region 构造函数
-        public ArticlesService(IArticlesRepository articlesRepository, ILogger<ArticlesService> logger)
+        public ArticlesService(IBlogsRepository articlesRepository, ILogger<ArticlesService> logger)
         {
-            _articlesRepository = articlesRepository;
+            _blogsRepository = articlesRepository;
             _logger = logger;
         }
         #endregion
@@ -34,7 +33,7 @@ namespace DotBlog.Server.Services
         #region 获取相关
 
         public async Task<IList<Article>> GetAllAsync()
-            => await _articlesRepository.GetAllAsync();
+            => await _blogsRepository.GetAllArticlesAsync();
 
         public async Task<IList<Article>> GetAllAsync(ArticleGetDtoParameters param)
         {
@@ -43,11 +42,11 @@ namespace DotBlog.Server.Services
 
             bool match(Article x) => x.Category == param.Category;
 
-            return await _articlesRepository.FindAllAsync(match,(int)param.Page,(int)param.Size);
+            return await _blogsRepository.GetMatchedArticlesAsync(match,(int)param.Page,(int)param.Size);
         }
 
-        public async Task<Article> GetAsync(uint articleId)
-            => await _articlesRepository.GetAsync((int)articleId);
+        public async Task<Article?> GetAsync(uint articleId)
+            => await _blogsRepository.GetArticleAsync((int)articleId);
 
         #endregion
 
@@ -84,7 +83,7 @@ namespace DotBlog.Server.Services
                 throw new ArgumentNullException(nameof(article));
 
             // 添加文章
-            _articlesRepository.Add(article);
+            _blogsRepository.AddArticle(article);
             // 返回结果
             return article;
         }
@@ -98,7 +97,7 @@ namespace DotBlog.Server.Services
             if (article is null)
                 throw new ArgumentNullException(nameof(article));
 
-            _articlesRepository.Remove(article);
+            _blogsRepository.RemoveArticle(article);
         }
 
         #endregion
@@ -106,10 +105,10 @@ namespace DotBlog.Server.Services
         #region 保存相关
 
         public async Task SaveAsync() =>
-            await _articlesRepository.SaveAsync();
+            await _blogsRepository.SaveAsync();
 
         public void Save() =>
-            _articlesRepository.Save();
+            _blogsRepository.Save();
 
         #endregion
     }
