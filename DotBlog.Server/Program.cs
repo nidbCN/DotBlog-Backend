@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using DotBlog.Server.Data;
 using DotBlog.Server.Services;
+using DotBlog.Server.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // 添加文章、回复服务
 builder.Services.AddScoped<IArticlesService, ArticlesService>();
 builder.Services.AddScoped<IRepliesService, RepliesService>();
+builder.Services.AddScoped<IBlogsRepository, BlogsRepository>();
 
 builder.Services.AddLogging();
 builder.Services.AddControllers();
