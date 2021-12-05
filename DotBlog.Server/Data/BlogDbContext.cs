@@ -31,20 +31,20 @@ namespace DotBlog.Server.Data
 
             // 设置关系
             replyConf
-                .HasOne(it => it.Article)
-                .WithMany(it => it.Replies)
-                .HasForeignKey(it => it.ArticleId)
+                .HasOne(x => x.Article)
+                .WithMany(x => x.Replies)
+                .HasForeignKey(x => x.ArticleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // 设置键和索引
-            replyConf.Property(it => it.ArticleId).IsRequired();
-            replyConf.Property(it => it.ReplyId).IsRequired();
-            replyConf.HasKey(it => it.ReplyId);
-            replyConf.HasIndex(it => it.ReplyId);
+            replyConf.Property(x => x.ArticleId).IsRequired();
+            replyConf.Property(x => x.ReplyId).IsRequired();
+            replyConf.HasKey(x => x.ReplyId);
+            replyConf.HasIndex(x => x.ReplyId);
 
-            articleConf.Property(it => it.ArticleId).IsRequired();
-            articleConf.HasKey(it => it.ArticleId);
-            articleConf.HasIndex(it => it.ArticleId);
+            articleConf.Property(x => x.ArticleId).IsRequired();
+            articleConf.HasKey(x => x.ArticleId);
+            articleConf.HasIndex(x => x.ArticleId);
 
             articleConf.HasData(
                 new Article()

@@ -49,7 +49,7 @@ namespace DotBlog.Server.Repositories
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            var query = _dbContext.Articles.Where(x => match(x));
+            var query = _dbContext.Articles.AsQueryable().Where(x => match(x));
 
             if (size.HasValue)
                 query = query.Skip(size.Value * (page - 1)).Take(size.Value);
