@@ -1,5 +1,5 @@
 # Import Asp.Net Core 5
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 
 # Copy Files  
 COPY . /public
