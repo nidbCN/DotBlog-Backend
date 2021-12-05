@@ -49,12 +49,10 @@ namespace DotBlog.Server.Repositories
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            var query = _dbContext.Articles.AsQueryable().Where(x => match(x));
+            if (!size.HasValue) 
+                return await _dbContext.Articles.Where(x => match(x)).ToListAsync();
 
-            if (size.HasValue)
-                query = query.Skip(size.Value * (page - 1)).Take(size.Value);
-
-            return await query.ToListAsync();
+            return await _dbContext.Articles.Where(x => match(x)).Skip(size.Value * (page - 1)).Take(size.Value).ToListAsync();
         }
         #endregion
 
