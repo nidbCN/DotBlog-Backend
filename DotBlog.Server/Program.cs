@@ -15,9 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BlogDbContext>(
     options =>
     {
-        var connStr = builder.Configuration.GetConnectionString("postgresql");
+        var connStr = builder.Configuration.GetConnectionString("mysql");
 
-        options.UseNpgsql(connStr);
+        // options.UseNpgsql(connStr);
+        options.UseMySql(connStr, new MySqlServerVersion("10.5"));
     }
 );
 
