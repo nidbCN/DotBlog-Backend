@@ -50,7 +50,7 @@ namespace DotBlog.Server.Repositories
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            var query = _dbContext.Articles.Where(match);
+            var query = _dbContext.Articles.Where(match).OrderBy(x => x.PostTime);
 
             if (!size.HasValue)
                 return await query.ToListAsync();
