@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DotBlog.Server.Repositories
@@ -44,15 +45,17 @@ namespace DotBlog.Server.Repositories
         public async Task<IList<Article>> GetAllArticlesAsync()
             => await _dbContext.Articles.ToListAsync();
 
-        public async Task<IList<Article>> GetMatchedArticlesAsync(Predicate<Article> match, int page = 1, int? size = null)
+        public async Task<IList<Article>> GetMatchedArticlesAsync(Expression<Func<Article, bool>> match, int page = 1, int? size = null)
         {
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            if (!size.HasValue) 
-                return await _dbContext.Articles.Where(x => match(x)).ToListAsync();
+            var query = _dbContext.Articles.Where(match);
 
-            return await _dbContext.Articles.Where(x => match(x)).Skip(size.Value * (page - 1)).Take(size.Value).ToListAsync();
+            if (!size.HasValue)
+                return await query.ToListAsync();
+
+            return await query.Skip(size.Value * (page - 1)).Take(size.Value).ToListAsync();
         }
         #endregion
 

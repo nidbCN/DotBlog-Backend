@@ -1,6 +1,7 @@
 ﻿using DotBlog.Server.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace DotBlog.Server.Repositories
@@ -31,7 +32,7 @@ namespace DotBlog.Server.Repositories
         /// <param name="page">页码</param>
         /// <param name="size">页容量</param>
         /// <returns>文章列表</returns>
-        public Task<IList<Article>> GetMatchedArticlesAsync(Predicate<Article> match, int page = 1, int? size = null);
+        public Task<IList<Article>> GetMatchedArticlesAsync(Expression<Func<Article, bool>> match, int page = 1, int? size = null);
 
         #endregion
 
