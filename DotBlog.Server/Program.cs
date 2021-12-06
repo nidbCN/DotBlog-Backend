@@ -18,6 +18,7 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("http://blog.gaein.cn",
                                 "http://localhost:8080");
+            builder.AllowAnyMethod();
         });
 });
 
