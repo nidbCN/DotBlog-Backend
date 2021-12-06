@@ -66,6 +66,8 @@ namespace DotBlog.Server.Repositories
                 throw new ArgumentNullException(nameof(article));
 
             _dbContext.Articles.Remove(article);
+
+            _dbContext.SaveChanges();
         }
 
         public void RemoveMatchedArticles(Predicate<Article> match)
@@ -90,6 +92,8 @@ namespace DotBlog.Server.Repositories
                 throw new ArgumentNullException(nameof(article));
 
             _dbContext.Articles.Add(article);
+
+            _dbContext.SaveChanges();
         }
 
         #endregion
@@ -117,8 +121,6 @@ namespace DotBlog.Server.Repositories
 
         #endregion
 
-
-
         #region 删除相关
 
         public void RemoveReply(Reply reply)
@@ -127,11 +129,13 @@ namespace DotBlog.Server.Repositories
                 throw new ArgumentNullException(nameof(reply));
 
             _dbContext.Replies.Remove(reply);
+
+            _dbContext.SaveChanges();
         }
 
         #endregion
 
-        #region
+        #region 新建相关
 
         public void AddReply(Reply reply)
         {
@@ -139,6 +143,8 @@ namespace DotBlog.Server.Repositories
                 throw new ArgumentNullException(nameof(reply));
 
             _dbContext.Replies.Add(reply);
+
+            _dbContext.SaveChanges();
         }
 
         #endregion
