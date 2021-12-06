@@ -11,6 +11,16 @@ using DotBlog.Server.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://blog.gaein.cn",
+                                "http://localhost:8080");
+        });
+});
+
 // 添加数据库上下文
 builder.Services.AddDbContext<BlogDbContext>(
     options =>
@@ -44,6 +54,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.MapControllers();
 
