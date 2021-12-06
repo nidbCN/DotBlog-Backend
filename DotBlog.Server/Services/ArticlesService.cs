@@ -40,9 +40,11 @@ namespace DotBlog.Server.Services
             if (param is null)
                 return await GetAllAsync();
 
-            bool match(Article x) => x.Category == param.Category;
-
-            return await _blogsRepository.GetMatchedArticlesAsync(match,(int)param.Page,(int)param.Size);
+            return await _blogsRepository.GetMatchedArticlesAsync(
+                x => x.Category == param.Category,
+                (int)param.Page,
+                (int)param.Size
+            );
         }
 
         public async Task<Article?> GetAsync(uint articleId)

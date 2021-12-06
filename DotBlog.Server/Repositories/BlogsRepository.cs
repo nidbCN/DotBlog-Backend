@@ -73,7 +73,7 @@ namespace DotBlog.Server.Repositories
             if (match is null)
                 throw new ArgumentNullException(nameof(match));
 
-            var searchResult = GetMatchedArticlesAsync(match).Result;
+            var searchResult = GetMatchedArticlesAsync(x => match(x)).Result;
             foreach (var article in searchResult)
             {
                 _dbContext.Articles.Remove(article);
