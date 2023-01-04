@@ -1,7 +1,3 @@
-﻿namespace DotBlog.Shared.Dto
-{
-    public class AccountLoginDto:AccountInputBase
-    {
+﻿namespace DotBlog.Shared.Dto;
+public class AccountLoginDto : AccountInputBase { }
 
-    }
-}

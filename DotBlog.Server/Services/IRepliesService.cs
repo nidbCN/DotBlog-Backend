@@ -2,62 +2,61 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DotBlog.Server.Services
+namespace DotBlog.Server.Services;
+
+public interface IRepliesService
 {
-    public interface IRepliesService
-    {
-        #region 获取相关
+    #region 获取相关
 
-        /// <summary>
-        /// 通过文章ID获取评论列表
-        /// </summary>
-        /// <param name="articleId">文章实体</param>
-        /// <returns>回复实体列表</returns>
-        public Task<IList<Reply>?> GetAllAsync(uint articleId);
+    /// <summary>
+    /// 通过文章ID获取评论列表
+    /// </summary>
+    /// <param name="articleId">文章实体</param>
+    /// <returns>回复实体列表</returns>
+    public Task<IList<Reply>?> GetAllAsync(uint articleId);
 
 
-        /// <summary>
-        /// 通过文章ID和回复ID获取回复
-        /// </summary>
-        /// <param name="articleId">文章实例</param>
-        /// <param name="replyId">回复ID</param>
-        /// <returns>回复实体</returns>
-        public Task<Reply?> GetAsync(uint articleId, uint replyId);
+    /// <summary>
+    /// 通过文章ID和回复ID获取回复
+    /// </summary>
+    /// <param name="articleId">文章实例</param>
+    /// <param name="replyId">回复ID</param>
+    /// <returns>回复实体</returns>
+    public Task<Reply?> GetAsync(uint articleId, uint replyId);
 
-        #endregion
+    #endregion
 
-        #region 更新相关
+    #region 更新相关
 
-        /// <summary>
-        /// 更新回复的点赞数
-        /// </summary>
-        /// <param name="reply">回复实体</param>
-        /// <returns>更新结果</returns>
-        public void Like(Reply reply);
+    /// <summary>
+    /// 更新回复的点赞数
+    /// </summary>
+    /// <param name="reply">回复实体</param>
+    /// <returns>更新结果</returns>
+    public void Like(Reply reply);
 
-        #endregion
+    #endregion
 
-        #region 写入相关
+    #region 写入相关
 
-        /// <summary>
-        /// 写入新评论
-        /// </summary>
-        /// <param name="article">文章实体</param>
-        /// <param name="reply">新回复实体</param>
-        /// <returns>更新的实体</returns>
-        public Reply Add(Article article, Reply reply);
+    /// <summary>
+    /// 写入新评论
+    /// </summary>
+    /// <param name="article">文章实体</param>
+    /// <param name="reply">新回复实体</param>
+    /// <returns>更新的实体</returns>
+    public Reply Add(Article article, Reply reply);
 
-        #endregion
+    #endregion
 
-        #region 删除相关
+    #region 删除相关
 
-        /// <summary>
-        /// 删除评论
-        /// </summary>
-        /// <param name="reply">回复ID</param>
-        /// <returns>删除结果</returns>
-        public void Delete(Reply reply);
+    /// <summary>
+    /// 删除评论
+    /// </summary>
+    /// <param name="reply">回复ID</param>
+    /// <returns>删除结果</returns>
+    public void Delete(Reply reply);
 
-        #endregion
-    }
+    #endregion
 }
